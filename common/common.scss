@@ -1375,3 +1375,191 @@ body.oa-welcome-page {
     }
   }
 }
+
+// ---------- Login and sign-up pages ----------
+
+// Discourse's own full-page login and sign-up, restyled to continue the
+// welcome page: same oxblood ground, the form on a dark card right under the
+// header (not floating mid-screen), gold primary button, outline social
+// buttons. Discourse resolves its derived colour variables once on :root, so
+// the palette and the button/input variables are both set here, scoped to
+// the page body; the header keeps the forum's own colours.
+
+html:has(body.login-page),
+html:has(body.signup-page) {
+  background: #2a070a;
+}
+
+// the hero's crowd photo behind the card, under the same flat veil, for
+// depth; the card itself stays solid so the form reads cleanly
+body.login-page,
+body.signup-page {
+  background:
+    linear-gradient(rgba(14, 3, 5, 0.74), rgba(14, 3, 5, 0.74)),
+    url(#{$photo_crowd}) center 40% / cover no-repeat fixed,
+    #2a070a;
+
+  // the stock login look swaps the header to the page colour and centres
+  // the logo; keep the header as on the rest of the forum
+  .d-header {
+    background-color: var(--header_background);
+  }
+  .d-header .home-logo-wrapper-outlet {
+    width: auto;
+  }
+  .d-header .title a {
+    margin: 0;
+  }
+}
+
+body.login-page .login-fullpage,
+body.signup-page .signup-fullpage {
+  // palette: cream on the card colour, gold for the main action
+  --primary: #f6efe6;
+  --primary-rgb: 246, 239, 230;
+  --primary-very-low: rgba(246, 239, 230, 0.04);
+  --primary-low: rgba(246, 239, 230, 0.12);
+  --primary-low-mid: rgba(246, 239, 230, 0.35);
+  --primary-medium: rgba(246, 239, 230, 0.66);
+  --primary-high: rgba(246, 239, 230, 0.8);
+  --primary-very-high: rgba(246, 239, 230, 0.92);
+  --primary-300: rgba(246, 239, 230, 0.28);
+  --primary-500: rgba(246, 239, 230, 0.6);
+  --primary-900: #f6efe6;
+  --secondary: #320a0f;
+  --secondary-rgb: 50, 10, 15;
+  --tertiary: #eaaa00;
+  --tertiary-rgb: 234, 170, 0;
+  --tertiary-hover: #f4b81a;
+  --danger: #fe4f4f;
+  --content-border-color: rgba(246, 239, 230, 0.12);
+  --input-border-color: rgba(246, 239, 230, 0.28);
+
+  // inputs: the card colour, so floating labels sit cleanly on the border
+  --d-input-bg-color: #320a0f;
+  --d-input-text-color: #f6efe6;
+  --d-input-border: 1px solid rgba(246, 239, 230, 0.28);
+  --d-input-focused-color: #eaaa00;
+
+  // gold primary button, like Join the forum
+  --d-button-primary-bg-color: #eaaa00;
+  --d-button-primary-bg-color--hover: #f4b81a;
+  --d-button-primary-text-color: #2a070a;
+  --d-button-primary-text-color--hover: #2a070a;
+  --d-button-primary-icon-color: #2a070a;
+  --d-button-primary-icon-color--hover: #2a070a;
+
+  // social and passkey buttons: quiet outlines, like Log in
+  --d-button-default-bg-color: transparent;
+  --d-button-default-bg-color--hover: rgba(246, 239, 230, 0.06);
+  --d-button-default-text-color: #f6efe6;
+  --d-button-default-text-color--hover: #f6efe6;
+  --d-button-default-icon-color: #f6efe6;
+  --d-button-default-icon-color--hover: #f6efe6;
+  --d-button-default-border: 1px solid rgba(246, 239, 230, 0.32);
+  --d-button-default-border--hover: 1px solid rgba(246, 239, 230, 0.5);
+
+  // flat links (Sign Up / Log In under the form)
+  --d-button-flat-text-color: #f6efe6;
+  --d-button-flat-text-color--hover: #eaaa00;
+  --d-button-flat-icon-color: #f6efe6;
+  --d-button-flat-bg-color--hover: transparent;
+
+  color: #f6efe6;
+  justify-content: flex-start;
+  // leave the bottom 44px for the photo credit
+  min-height: calc(100vh - var(--header-offset, 0px) - 44px);
+  padding: clamp(32px, 7vh, 88px) 16px 48px;
+  box-sizing: border-box;
+
+  a {
+    color: #eaaa00;
+  }
+
+  .login-body,
+  .signup-body {
+    background: #320a0f;
+    border: 1px solid rgba(246, 239, 230, 0.12);
+    border-radius: 24px;
+    box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.7);
+    max-width: 860px;
+  }
+
+  .alert {
+    border-radius: 12px;
+    margin-bottom: 12px;
+    max-width: 860px;
+  }
+
+  .login-title {
+    font-family: "OAW Outfit", var(--font-family);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #f6efe6;
+  }
+
+  .btn-social,
+  .btn-primary {
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  // social and passkey buttons carry fixed white/black colours in core;
+  // make them quiet cream outlines with cream icons (black X would vanish)
+  .btn-social {
+    background: transparent;
+    color: #f6efe6;
+    border: 1px solid rgba(246, 239, 230, 0.32);
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(246, 239, 230, 0.06);
+      border-color: rgba(246, 239, 230, 0.5);
+      color: #f6efe6;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #eaaa00;
+      outline-offset: 2px;
+    }
+
+    .d-icon,
+    &.btn:hover .d-icon {
+      color: #f6efe6;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  body.login-page .login-fullpage,
+  body.signup-page .signup-fullpage {
+    padding: 20px 12px 40px;
+
+    .login-body,
+    .signup-body {
+      border-radius: 20px;
+      padding-block: 8px 16px;
+    }
+  }
+}
+
+.oaw-auth-credit {
+  // the outlet sits in Discourse's main grid: span it, below the page
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 16px 16px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(246, 239, 230, 0.75);
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(246, 239, 230, 0.3);
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: #f6efe6;
+    }
+  }
+}
