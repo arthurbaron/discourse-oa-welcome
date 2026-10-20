@@ -1,0 +1,785 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OA welcome page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ox-950: #160305;
+    --ox-900: #2a070a;
+    --ox-800: #380a0e;
+    --ox-750: #3f0c11;
+    --club-red: #db0007;
+    --gold: #eaaa00;
+    --gold-hi: #fbe08a;
+    --gold-lo: #b97a06;
+    --cream: #f6efe6;
+    --cream-muted: rgba(246, 239, 230, 0.68);
+    --cream-dim: rgba(246, 239, 230, 0.6);
+    --hair: rgba(246, 239, 230, 0.12);
+
+    /* the logged-in red theme, as seen inside the phone */
+    --app-bg: #140304;
+    --app-header: #8a0b0b;
+    --app-text: #f3e9e6;
+    --app-accent: #ef8f80;
+    --app-hot: #e3a54a;
+    --app-hair: rgba(255, 255, 255, 0.08);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-num: "SF Pro Display", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    /* display face: echoes the logo lettering; running text stays system */
+    --font-display: "Outfit", var(--font-sans);
+
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0' intercept='0.55'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  html, body {
+    margin: 0;
+    color: var(--cream);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(ellipse 70% 900px at 15% 0%, rgba(150, 22, 32, 0.55), transparent 70%),
+      var(--grain),
+      var(--ox-900);
+    background-blend-mode: normal, overlay, normal;
+  }
+
+  body { overflow-x: clip; }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-inline: 24px;
+  }
+
+  /* ---------- Shared type ---------- */
+
+  .logo-mock {
+    display: inline-block;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    background: linear-gradient(180deg, var(--gold-hi) 0%, var(--gold) 48%, var(--gold-lo) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin: 0 0 14px;
+  }
+
+  h1, h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h1 { font-size: 56px; line-height: 1.02; margin-bottom: 18px; }
+  h2 { font-size: 36px; line-height: 1.08; margin-bottom: 14px; }
+
+  .lead {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--cream-muted);
+    margin: 0;
+    max-width: 44ch;
+  }
+
+  .fine {
+    font-size: 13px;
+    color: var(--cream-dim);
+    margin: 14px 0 0;
+  }
+
+  /* ---------- Buttons ---------- */
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  .btn-join { background: var(--gold); color: var(--ox-900); border: 1px solid var(--gold); }
+  .btn-join:hover { background: #f4b81a; }
+
+  .btn-login { background: transparent; color: var(--cream); border: 1px solid rgba(246, 239, 230, 0.32); }
+  .btn-login:hover { background: rgba(246, 239, 230, 0.06); border-color: rgba(246, 239, 230, 0.5); }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 48px;
+    padding-top: 64px;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .hero-text {
+    padding-bottom: 72px;
+    align-self: center;
+  }
+  .hero-text .logo {
+    display: block;
+    width: 260px;
+    height: auto;
+    margin-bottom: 44px;
+  }
+
+  .hero-visual {
+    align-self: end;
+    height: 560px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* warm red glow so the dark phone separates from the dark ground */
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 12%;
+    width: 520px;
+    height: 520px;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(219, 0, 7, 0.32), rgba(219, 0, 7, 0.08) 60%, transparent);
+    pointer-events: none;
+  }
+
+  /* ---------- Phone with the recreated topic list ---------- */
+
+  .phone {
+    width: 340px;
+    position: relative;
+    flex: 0 0 auto;
+    padding: 10px 10px 0;
+    background: #0a0102;
+    border-radius: 46px 46px 0 0;
+    box-shadow:
+      0 0 0 1px rgba(246, 239, 230, 0.10),
+      0 40px 80px -30px rgba(0, 0, 0, 0.8);
+    animation: rise 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .screen {
+    background: var(--app-bg);
+    border-radius: 36px 36px 0 0;
+    overflow: hidden;
+    height: 640px;
+    color: var(--app-text);
+  }
+
+  .app-header {
+    background: var(--app-header);
+    padding: 34px 16px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .app-header .app-logo { display: block; width: auto; height: 30px; }
+  .app-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c43c3c, #5a0d0d);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+
+  .app-title {
+    padding: 14px 14px 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--app-accent);
+    border-bottom: 1px solid var(--app-hair);
+  }
+
+  .topic {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 11px;
+    align-items: start;
+    padding: 11px 15px;
+    border-bottom: 1px solid var(--app-hair);
+  }
+
+  .letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .t-title {
+    font-size: 14.5px;
+    line-height: 1.25;
+    margin-bottom: 3px;
+  }
+  .t-cat {
+    font-size: 11px;
+    color: var(--app-accent);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .t-cat i {
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    background: var(--c);
+  }
+
+  .t-meta {
+    text-align: right;
+    display: grid;
+    gap: 4px;
+    justify-items: end;
+  }
+  .t-count {
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .t-count.hot { color: var(--app-hot); }
+  .t-unread {
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #f5d97a;
+    color: #2a0609;
+    font-size: 10px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+  }
+  .t-time { font-size: 11px; color: var(--app-accent); }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* ---------- Feature sections ---------- */
+
+  .feature {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 56px;
+    align-items: center;
+    padding-block: 88px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .feature.flip { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+  .feature.flip .feature-text { order: 2; }
+
+  .feature-text .lead { max-width: 40ch; }
+
+  /* ---------- Cards (same system as the real components) ---------- */
+
+  .card {
+    background: var(--ox-800);
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.7);
+  }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .badge {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(246, 239, 230, 0.06);
+    color: var(--cream-muted);
+    border: 1px solid var(--hair);
+  }
+  .badge.accent {
+    background: color-mix(in oklab, var(--club-red) 22%, var(--ox-800));
+    color: color-mix(in oklab, var(--club-red) 35%, var(--cream));
+    border-color: color-mix(in oklab, var(--club-red) 35%, transparent);
+  }
+
+  .card h3 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    margin: 4px 0 4px;
+  }
+  .card .sub { font-size: 12.5px; color: var(--cream-dim); margin: 0; }
+
+  .poll {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hair);
+    display: grid;
+    gap: 10px;
+  }
+  .poll-row span {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    margin-bottom: 5px;
+  }
+  .poll-row span b { font-weight: 600; }
+  .poll-row span i { font-style: normal; color: var(--cream-dim); }
+  .photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 690 / 388;
+    object-fit: cover;
+    object-position: 50% 58%;
+    margin-top: 16px;
+    border-radius: 8px;
+    background: var(--ox-750);
+  }
+
+  /* poll in its pre-kick-off state: options to pick, no results yet */
+  .poll.vote { gap: 8px; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    background: rgba(246, 239, 230, 0.04);
+    border: 1px solid var(--hair);
+  }
+  .option i {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--cream-dim);
+    flex: 0 0 auto;
+  }
+  .vote-btn {
+    justify-self: start;
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid rgba(246, 239, 230, 0.32);
+  }
+  .bar { height: 6px; border-radius: 3px; background: rgba(246, 239, 230, 0.08); overflow: hidden; }
+  .bar::after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: var(--w);
+    background: rgba(246, 239, 230, 0.8);
+    border-radius: 3px;
+  }
+
+  .player {
+    display: grid;
+    grid-template-columns: 132px 1fr;
+    gap: 20px;
+  }
+  .shirt {
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 12px 8px 12px;
+    color: #fff;
+    background:
+      radial-gradient(ellipse 110% 80% at 50% 8%, rgba(255, 255, 255, 0.05), transparent 62%),
+      radial-gradient(ellipse 130% 60% at 50% 100%, rgba(0, 0, 0, 0.24), transparent 55%),
+      var(--grain),
+      var(--club-red);
+    background-blend-mode: normal, normal, overlay, normal;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  .shirt small {
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+  }
+  .shirt strong {
+    align-self: center;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 80px;
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+  }
+  .bio {
+    grid-column: 1 / -1;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--cream);
+    margin: 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--hair);
+  }
+  .facts {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--hair);
+    border: 1px solid var(--hair);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .facts div {
+    background: var(--ox-750);
+    padding: 9px 11px 10px;
+    font-size: 12.5px;
+  }
+  .facts div::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin-bottom: 3px;
+  }
+
+  /* ---------- Lineup pitch (mirrors the formation plugin's render) ---------- */
+
+  .lineup {
+    margin: 0;
+    justify-self: center;
+    width: 100%;
+    max-width: 360px;
+  }
+  .pitch {
+    position: relative;
+    aspect-ratio: 68 / 100;
+    border-radius: 6px;
+    overflow: hidden;
+    background:
+      repeating-linear-gradient(180deg, #4a8a3c 0 9.09%, #3f7a33 9.09% 18.18%);
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+      0 24px 48px -24px rgba(0, 0, 0, 0.7);
+  }
+  .pitch::before {
+    content: "";
+    position: absolute;
+    inset: 3.5%;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+  }
+  .ln { position: absolute; border: 2px solid rgba(255, 255, 255, 0.85); }
+  .ln-half { left: 3.5%; right: 3.5%; top: 50%; height: 0; border-width: 2px 0 0; }
+  .ln-circle { left: 50%; top: 50%; width: 26%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); }
+  .ln-spot { left: 50%; top: 50%; width: 5px; height: 5px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.9); transform: translate(-50%, -50%); }
+  .ln-box { left: 21%; right: 21%; height: 15%; }
+  .ln-six { left: 34%; right: 34%; height: 6%; }
+  .ln-arc { left: 50%; width: 22%; aspect-ratio: 2 / 1; transform: translateX(-50%); }
+  .ln-top { top: 3.5%; }
+  .ln-box.ln-top, .ln-six.ln-top { border-top: 0; }
+  .ln-arc.ln-top { top: 18.5%; border-top: 0; border-radius: 0 0 999px 999px; }
+  .ln-bottom { bottom: 3.5%; }
+  .ln-box.ln-bottom, .ln-six.ln-bottom { border-bottom: 0; }
+  .ln-arc.ln-bottom { bottom: 18.5%; border-bottom: 0; border-radius: 999px 999px 0 0; }
+
+  .pl {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    transform: translate(-50%, -50%);
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+    white-space: nowrap;
+  }
+  .pl::before {
+    content: "";
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #d63a2f;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .lineup figcaption {
+    text-align: center;
+    font-size: 13px;
+    color: var(--cream-dim);
+    margin-top: 10px;
+  }
+
+  /* ---------- Closing CTA ---------- */
+
+  .feature:has(+ .closing) { border-bottom: 0; }
+
+  /* full-bleed finale band: the page gets an ending, not just a beginning */
+  .closing {
+    margin-inline: calc(50% - 50vw);
+    padding-inline: calc(50vw - 50%);
+    padding-block: 96px;
+    border-top: 1px solid color-mix(in oklab, var(--gold) 40%, transparent);
+    background:
+      radial-gradient(ellipse 60% 120% at 85% 0%, rgba(150, 22, 32, 0.5), transparent 70%),
+      var(--ox-950);
+  }
+  .closing h2 { font-size: 44px; }
+  .closing .actions { margin-top: 26px; }
+
+  .footer-line {
+    padding-block: 40px 32px;
+    font-size: 12px;
+    color: var(--cream-dim);
+  }
+
+  /* ---------- Mobile ---------- */
+
+  /* Tablet and below: stack. Two columns get too tight under ~960px. */
+  @media (max-width: 960px) {
+    .hero { grid-template-columns: 1fr; gap: 40px; padding-top: 48px; }
+    .hero-text { padding-bottom: 0; }
+    .hero-visual { height: 460px; }
+
+    .feature,
+    .feature.flip { grid-template-columns: 1fr; gap: 32px; padding-block: 72px; }
+    .feature.flip .feature-text { order: 0; }
+    .feature > :not(.feature-text) { width: 100%; max-width: 560px; box-sizing: border-box; }
+    .feature > .lineup { max-width: 340px; justify-self: start; }
+  }
+
+  /* Phones: smaller type, full-width buttons, tighter cards */
+  @media (max-width: 600px) {
+    h1 { font-size: 38px; }
+    h2 { font-size: 28px; }
+    .closing h2 { font-size: 32px; }
+    .lead { font-size: 16px; }
+
+    .hero { padding-top: 40px; }
+    .hero-text .logo { width: 210px; margin-bottom: 32px; }
+    .hero-visual { height: 420px; }
+    .hero-visual::before { width: 380px; height: 380px; }
+    .phone { width: 300px; }
+    .actions .btn { flex: 1 1 auto; }
+
+    .feature,
+    .feature.flip { padding-block: 64px; }
+
+    .player { grid-template-columns: 96px 1fr; gap: 14px; }
+    .shirt strong { font-size: 54px; }
+    .card h3 { font-size: 22px; }
+
+
+    .closing { padding-block: 72px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .phone { animation: none; }
+    .btn { transition: none; }
+  }
+</style>
+
+<main class="wrap">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-text">
+      <img class="logo" src="assets/oa-logo-full.svg" alt="Online Arsenal" width="403" height="69">
+      <p class="eyebrow">Arsenal fan forum</p>
+      <h1>The forum Gooners have argued&nbsp;on since&nbsp;2003.</h1>
+      <p class="lead">A thread for every match, every player and every transfer rumour, with plenty of Gooners ready to argue the other side.</p>
+      <div class="actions">
+        <button type="button" class="btn btn-join">Join the forum</button>
+        <button type="button" class="btn btn-login">Log in</button>
+      </div>
+      <p class="fine">Free to join.</p>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="phone">
+        <div class="screen">
+          <div class="app-header">
+            <img class="app-logo" src="assets/oa-logo-small.svg" alt="" width="125" height="64">
+            <span class="app-avatar"></span>
+          </div>
+          <div class="app-title">Latest</div>
+
+          <div class="topic">
+            <span class="letter" style="background:#7d5a3c">J</span>
+            <div><div class="t-title">Mikel Arteta</div><div class="t-cat"><i style="--c:#d1323a"></i>The Arsenal</div></div>
+            <div class="t-meta"><span class="t-count hot">26.6k</span><span class="t-time">3m</span></div>
+          </div>
+          <div class="topic">
+            <span class="letter" style="background:#5b7fa6">R</span>
+            <div><div class="t-title">Bayern vs Arsenal (CL)</div><div class="t-cat"><i style="--c:#d1323a"></i>Matchday</div></div>
+            <div class="t-meta"><span class="t-unread">12</span><span class="t-time">4m</span></div>
+          </div>
+          <div class="topic">
+            <span class="letter" style="background:#6f8a4f">T</span>
+            <div><div class="t-title">Noni Madueke (20)</div><div class="t-cat"><i style="--c:#d1323a"></i>The Players</div></div>
+            <div class="t-meta"><span class="t-unread">4</span><span class="t-time">9m</span></div>
+          </div>
+          <div class="topic">
+            <span class="letter" style="background:#9a5a7f">M</span>
+            <div><div class="t-title">Transfer Wishlist</div><div class="t-cat"><i style="--c:#a61e24"></i>Rumour Mill</div></div>
+            <div class="t-meta"><span class="t-count hot">5.7k</span><span class="t-time">14m</span></div>
+          </div>
+          <div class="topic">
+            <span class="letter" style="background:#b07a3a">G</span>
+            <div><div class="t-title">Arsenal Kits and Merch</div><div class="t-cat"><i style="--c:#d1323a"></i>The Arsenal</div></div>
+            <div class="t-meta"><span class="t-unread">1</span><span class="t-time">18m</span></div>
+          </div>
+          <div class="topic">
+            <span class="letter" style="background:#4f7d77">S</span>
+            <div><div class="t-title">Premier League 2026/27</div><div class="t-cat"><i style="--c:#3aa0dd"></i>English Football</div></div>
+            <div class="t-meta"><span class="t-count">1.6k</span><span class="t-time">26m</span></div>
+          </div>
+          <div class="topic">
+            <span class="letter" style="background:#8a6a9e">B</span>
+            <div><div class="t-title">The randomly nothing thread</div><div class="t-cat"><i style="--c:#ef8a1e"></i>The Cross Bar</div></div>
+            <div class="t-meta"><span class="t-count hot">16.3k</span><span class="t-time">31m</span></div>
+          </div>
+          <div class="topic">
+            <span class="letter" style="background:#7d5a3c">K</span>
+            <div><div class="t-title">Gabriel Martinelli</div><div class="t-cat"><i style="--c:#d1323a"></i>Former Gunners</div></div>
+            <div class="t-meta"><span class="t-count hot">5.8k</span><span class="t-time">40m</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Match threads -->
+  <section class="feature">
+    <div class="feature-text">
+      <p class="eyebrow">Match threads</p>
+      <h2>Every match gets its own thread.</h2>
+      <p class="lead">Call the result before kick-off, react as it happens, then see who got it right.</p>
+    </div>
+    <div class="card" aria-hidden="true">
+      <div class="badges">
+        <span class="badge accent">Premier League</span>
+        <span class="badge">North London derby</span>
+      </div>
+      <h3>Arsenal vs Tottenham</h3>
+      <p class="sub">Emirates Stadium</p>
+      <img class="photo" src="https://images.unsplash.com/photo-1577224682146-dd7843c88d33?fm=jpg&amp;q=75&amp;w=1200&amp;auto=format" alt="" loading="lazy" width="1200" height="800">
+      <div class="poll vote">
+        <div class="option"><i></i>Arsenal win</div>
+        <div class="option"><i></i>Draw</div>
+        <div class="option"><i></i>Tottenham win</div>
+        <span class="vote-btn">Vote</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lineups -->
+  <section class="feature flip">
+    <div class="feature-text">
+      <p class="eyebrow">Lineups</p>
+      <h2>Pick your starting XI.</h2>
+      <p class="lead">Choose a formation, type eleven names, and your post turns into a pitch. Handy for the weekly argument about who should start.</p>
+    </div>
+    <figure class="lineup" aria-hidden="true">
+      <div class="pitch">
+        <span class="ln ln-half"></span>
+        <span class="ln ln-circle"></span>
+        <span class="ln ln-spot"></span>
+        <span class="ln ln-box ln-top"></span>
+        <span class="ln ln-six ln-top"></span>
+        <span class="ln ln-arc ln-top"></span>
+        <span class="ln ln-box ln-bottom"></span>
+        <span class="ln ln-six ln-bottom"></span>
+        <span class="ln ln-arc ln-bottom"></span>
+
+        <span class="pl" style="--x:50%; --y:12%">Havertz</span>
+        <span class="pl" style="--x:17%; --y:37%">Madueke</span>
+        <span class="pl" style="--x:50%; --y:37%">Odegaard</span>
+        <span class="pl" style="--x:83%; --y:37%">Saka</span>
+        <span class="pl" style="--x:34%; --y:57%">Zubimendi</span>
+        <span class="pl" style="--x:66%; --y:57%">Rice</span>
+        <span class="pl" style="--x:11%; --y:72%">MLS</span>
+        <span class="pl" style="--x:31%; --y:72%">Gabriel</span>
+        <span class="pl" style="--x:69%; --y:72%">Saliba</span>
+        <span class="pl" style="--x:89%; --y:72%">Timber</span>
+        <span class="pl" style="--x:50%; --y:85%">Raya</span>
+      </div>
+      <figcaption>4-2-3-1</figcaption>
+    </figure>
+  </section>
+
+  <!-- Player threads -->
+  <section class="feature">
+    <div class="feature-text">
+      <p class="eyebrow">Player threads</p>
+      <h2>Every player gets one too.</h2>
+      <p class="lead">Each thread follows a player from the first transfer rumour to the farewell, with the essentials pinned at the top.</p>
+    </div>
+    <div class="card player" aria-hidden="true">
+      <div class="shirt"><small>SAKA</small><strong>7</strong></div>
+      <div>
+        <div class="badges">
+          <span class="badge accent">Winger</span>
+          <span class="badge">England</span>
+        </div>
+        <h3>Bukayo Saka</h3>
+        <p class="sub">Bukayo Ayoyinka Temidayo Saka · 5 September 2001, Ealing</p>
+      </div>
+      <p class="bio">Homegrown, hero-of-the-North-Bank type. Right winger who cuts in on his left; runs at defenders in a way this club has not had for a long time.</p>
+      <div class="facts">
+        <div data-label="Position">RW</div>
+        <div data-label="Contract">June 2030</div>
+        <div data-label="Squad number">7</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="closing">
+    <h2>Pull up a seat.</h2>
+    <p class="lead">Join for free, or log in to pick up where you left off.</p>
+    <div class="actions">
+      <button type="button" class="btn btn-join">Join the forum</button>
+      <button type="button" class="btn btn-login">Log in</button>
+    </div>
+  </section>
+
+  <p class="footer-line">Powered by Gooners since 2003</p>
+</main>

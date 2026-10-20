@@ -1,0 +1,206 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OA type specimen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Outfit:wght@600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Google+Sans+Flex:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ox-900: #2a070a;
+    --ox-800: #380a0e;
+    --club-red: #db0007;
+    --cream: #f6efe6;
+    --cream-muted: rgba(246, 239, 230, 0.68);
+    --cream-dim: rgba(246, 239, 230, 0.6);
+    --hair: rgba(246, 239, 230, 0.12);
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ox-900);
+    color: var(--cream);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .intro { max-width: 62ch; margin-bottom: 36px; color: var(--cream-muted); font-size: 15px; line-height: 1.55; }
+  .intro b { color: var(--cream); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .opt {
+    background: var(--ox-800);
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    padding: 22px 20px 24px;
+    display: grid;
+    gap: 18px;
+    align-content: start;
+  }
+  .opt.current { opacity: 0.75; }
+
+  .label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .label b { color: var(--cream); letter-spacing: 0.08em; }
+
+  .logo { width: 100%; height: auto; display: block; }
+
+  .h1 { font-size: 34px; line-height: 1.02; margin: 0; text-wrap: balance; }
+  .h2 { font-size: 22px; line-height: 1.1; margin: 0; }
+  .body { font-size: 14px; line-height: 1.55; color: var(--cream-muted); margin: 0; }
+
+  .row { display: flex; align-items: center; gap: 14px; }
+  .shirt {
+    width: 76px;
+    aspect-ratio: 1;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    background: var(--club-red);
+    color: #fff;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 8px 4px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  .shirt small { font-size: 7.5px; font-weight: 700; letter-spacing: 0.2em; font-family: var(--font-sans); }
+  .shirt strong { align-self: center; font-size: 46px; line-height: 0.85; text-shadow: 0 2px 6px rgba(0,0,0,0.22); }
+  .name { font-size: 20px; line-height: 1.05; }
+  .sub { font-size: 11.5px; color: var(--cream-dim); font-family: var(--font-sans); margin-top: 3px; }
+
+  .note { font-size: 12.5px; line-height: 1.5; color: var(--cream-muted); margin: 0; }
+
+  /* each option only swaps the display face */
+  .f-system  .d { font-family: var(--font-sans); font-weight: 800; letter-spacing: -0.025em; }
+  .f-spartan .d { font-family: "League Spartan", var(--font-sans); font-weight: 700; letter-spacing: -0.02em; }
+  .f-outfit  .d { font-family: "Outfit", var(--font-sans); font-weight: 700; letter-spacing: -0.02em; }
+  .f-barlow  .d { font-family: "Barlow Condensed", var(--font-sans); font-weight: 700; letter-spacing: -0.005em; }
+  .f-gsans   .d { font-family: "Google Sans Flex", var(--font-sans); font-weight: 700; letter-spacing: -0.02em; }
+
+  .duel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-bottom: 48px; }
+  .duel .h1 { font-size: 44px; }
+  .duel .h2 { font-size: 28px; }
+  .duel .name { font-size: 24px; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-dim); margin: 0 0 14px; }
+  @media (max-width: 760px) { .duel { grid-template-columns: 1fr; } }
+  .f-barlow .h1 { font-size: 42px; }
+  .f-barlow .h2 { font-size: 27px; }
+  .f-barlow .name { font-size: 24px; }
+  .f-barlow .shirt strong { font-size: 54px; }
+
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+</style>
+
+<main class="page">
+  <p class="intro"><b>Type specimen.</b> Same content in each column, only the display face changes: headlines, section titles, player names and squad numbers. Running text stays the system font so it matches the forum's body copy.</p>
+
+  <p class="section-label">Head to head</p>
+  <div class="duel">
+    <section class="opt f-outfit">
+      <div class="label"><b>Outfit</b><span>favourite so far</span></div>
+      <img class="logo" src="assets/oa-logo-full.svg" alt="">
+      <h1 class="h1 d">The forum Gooners have argued on since 2003.</h1>
+      <h2 class="h2 d">Pick your starting XI.</h2>
+      <p class="body">A thread for every match, every player and every transfer rumour.</p>
+      <div class="row">
+        <div class="shirt"><small>SAKA</small><strong class="d">7</strong></div>
+        <div><div class="name d">Bukayo Saka</div><div class="sub">Winger · England</div></div>
+      </div>
+      <p class="note">Single-storey a, round O, short r: shares the logo's letter shapes.</p>
+    </section>
+
+    <section class="opt f-gsans">
+      <div class="label"><b>Google Sans Flex</b><span>new candidate</span></div>
+      <img class="logo" src="assets/oa-logo-full.svg" alt="">
+      <h1 class="h1 d">The forum Gooners have argued on since 2003.</h1>
+      <h2 class="h2 d">Pick your starting XI.</h2>
+      <p class="body">A thread for every match, every player and every transfer rumour.</p>
+      <div class="row">
+        <div class="shirt"><small>SAKA</small><strong class="d">7</strong></div>
+        <div><div class="name d">Bukayo Saka</div><div class="sub">Winger · England</div></div>
+      </div>
+      <p class="note">Friendly geometric with very even rhythm. The face of Android and Google's apps.</p>
+    </section>
+  </div>
+
+  <p class="section-label">Earlier round</p>
+  <div class="grid">
+
+    <section class="opt current f-system">
+      <div class="label"><b>Now</b><span>System UI</span></div>
+      <img class="logo" src="assets/oa-logo-full.svg" alt="">
+      <h1 class="h1 d">The forum Gooners have argued on since 2003.</h1>
+      <h2 class="h2 d">Pick your starting XI.</h2>
+      <p class="body">A thread for every match, every player and every transfer rumour.</p>
+      <div class="row">
+        <div class="shirt"><small>SAKA</small><strong class="d">7</strong></div>
+        <div><div class="name d">Bukayo Saka</div><div class="sub">Winger · England</div></div>
+      </div>
+      <p class="note">Reference. Reads like Inter: clean, but could be any product.</p>
+    </section>
+
+    <section class="opt f-spartan">
+      <div class="label"><b>1</b><span>League Spartan</span></div>
+      <img class="logo" src="assets/oa-logo-full.svg" alt="">
+      <h1 class="h1 d">The forum Gooners have argued on since 2003.</h1>
+      <h2 class="h2 d">Pick your starting XI.</h2>
+      <p class="body">A thread for every match, every player and every transfer rumour.</p>
+      <div class="row">
+        <div class="shirt"><small>SAKA</small><strong class="d">7</strong></div>
+        <div><div class="name d">Bukayo Saka</div><div class="sub">Winger · England</div></div>
+      </div>
+      <p class="note">Closest to the logo: geometric, round O, single-storey a. Matchday-poster energy.</p>
+    </section>
+
+    <section class="opt f-outfit">
+      <div class="label"><b>2</b><span>Outfit</span></div>
+      <img class="logo" src="assets/oa-logo-full.svg" alt="">
+      <h1 class="h1 d">The forum Gooners have argued on since 2003.</h1>
+      <h2 class="h2 d">Pick your starting XI.</h2>
+      <p class="body">A thread for every match, every player and every transfer rumour.</p>
+      <div class="row">
+        <div class="shirt"><small>SAKA</small><strong class="d">7</strong></div>
+        <div><div class="name d">Bukayo Saka</div><div class="sub">Winger · England</div></div>
+      </div>
+      <p class="note">Same geometric family, softer and friendlier. Echoes the logo's rounded shapes.</p>
+    </section>
+
+    <section class="opt f-barlow">
+      <div class="label"><b>3</b><span>Barlow Condensed</span></div>
+      <img class="logo" src="assets/oa-logo-full.svg" alt="">
+      <h1 class="h1 d">The forum Gooners have argued on since 2003.</h1>
+      <h2 class="h2 d">Pick your starting XI.</h2>
+      <p class="body">A thread for every match, every player and every transfer rumour.</p>
+      <div class="row">
+        <div class="shirt"><small>SAKA</small><strong class="d">7</strong></div>
+        <div><div class="name d">Bukayo Saka</div><div class="sub">Winger · England</div></div>
+      </div>
+      <p class="note">Contrast instead of echo: scoreboard and shirt-number feel. Strongest on numbers.</p>
+    </section>
+
+  </div>
+</main>
