@@ -1,9 +1,11 @@
+<html lang="en" data-look="brush">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OA welcome page</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
 <style>
   :root {
@@ -11,6 +13,13 @@
     --ox-900: #2a070a;
     --ox-800: #380a0e;
     --ox-750: #3f0c11;
+    --ox-850: #320a0f;   /* feature-stack cards */
+    --ox-1000: #0b0102;  /* darkens a covered stack card */
+    --tint: #7a0d14;     /* multiplied over the hero photo */
+    --veil: rgba(14, 3, 5, 0.8); /* over the closing photo */
+    --shadow-ink: #000;  /* colour of every drop shadow */
+    --band: #c3001e;     /* solid red of hero and closing with &fill=red */
+    --photo-veil: rgba(14, 3, 5, 0.74); /* over the hero and closing photo: cream text stays 8.7:1 even over pure white */
     --club-red: #db0007;
     --gold: #eaaa00;
     --gold-hi: #fbe08a;
@@ -32,8 +41,27 @@
     --font-num: "SF Pro Display", -apple-system, "Helvetica Neue", Arial, sans-serif;
     /* display face: echoes the logo lettering; running text stays system */
     --font-display: "Outfit", var(--font-sans);
+    /* page-level titles: cream, so gold stays reserved for the logo and Join button */
+    --title: var(--cream);
 
     --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0' intercept='0.55'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* Variant (?red=arsenal): the same scale retuned to arsenal.com's own
+     reds (web red #c3001e, dark red #93040c). Warmer and lighter than the
+     oxblood. On a red page, black turns muddy, so cards step lighter than
+     the page (as they do on oxblood) and shadows and the dimming of covered
+     cards use a deep red instead. Muted text stays at 4.9:1 or better. */
+  :root[data-red="arsenal"] {
+    --ox-900: #4b090a;
+    --ox-850: #540b0c;
+    --ox-800: #5b0d0e;
+    --ox-750: #620f10;
+    --ox-1000: #2a0203;
+    --tint: #93040c;
+    --veil: rgba(33, 2, 2, 0.78);
+    --club-red: #c3001e;
+    --shadow-ink: #2a0003;
   }
 
   html, body {
@@ -41,11 +69,8 @@
     color: var(--cream);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    background:
-      radial-gradient(ellipse 70% 900px at 15% 0%, rgba(150, 22, 32, 0.55), transparent 70%),
-      var(--grain),
-      var(--ox-900);
-    background-blend-mode: normal, overlay, normal;
+    background: var(--grain), var(--ox-900);
+    background-blend-mode: overlay, normal;
   }
 
   body { overflow-x: clip; }
@@ -70,17 +95,9 @@
     color: transparent;
   }
 
-  .eyebrow {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--cream-dim);
-    margin: 0 0 14px;
-  }
-
   h1, h2 {
     font-family: var(--font-display);
+    color: var(--title);
     font-weight: 700;
     letter-spacing: -0.02em;
     margin: 0;
@@ -138,6 +155,33 @@
     gap: 48px;
     padding-top: 64px;
     border-bottom: 1px solid var(--hair);
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* Full-bleed crowd photo, kept very quiet. Default: tinted dark red
+     (the photo's light and shade, the club's hue). ?hero=bw: black and white.
+     Fades out towards the bottom so it melts into the page. */
+  .hero-photo {
+    position: absolute;
+    inset: 0 calc(50% - 50vw);
+    z-index: -1;
+    /* multiply, not colour: highlights can never get lighter than the
+       deep red, so the sky and roof stay oxblood instead of turning pink */
+    background:
+      linear-gradient(var(--tint), var(--tint)),
+      url("https://images.unsplash.com/photo-1665413813191-3143ec934960?fm=jpg&q=70&w=2000&auto=format") center 40% / cover no-repeat;
+    background-blend-mode: multiply, normal;
+    opacity: 0.2;
+    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+    pointer-events: none;
+  }
+  :root[data-hero="bw"] .hero-photo {
+    background:
+      url("https://images.unsplash.com/photo-1665413813191-3143ec934960?fm=jpg&q=70&w=2000&auto=format") center 40% / cover no-repeat;
+    filter: grayscale(1) contrast(1.05);
+    opacity: 0.13;
   }
 
   .hero-text {
@@ -154,23 +198,12 @@
   .hero-visual {
     align-self: end;
     height: 560px;
-    overflow: hidden;
+    /* crop only the bottom edge (the phone runs off the hero); the shadow
+       stays free on the sides and top */
+    clip-path: inset(-200px -200px 0 -200px);
     display: flex;
     justify-content: center;
     position: relative;
-  }
-
-  /* warm red glow so the dark phone separates from the dark ground */
-  .hero-visual::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 12%;
-    width: 520px;
-    height: 520px;
-    transform: translateX(-50%);
-    background: radial-gradient(closest-side, rgba(219, 0, 7, 0.32), rgba(219, 0, 7, 0.08) 60%, transparent);
-    pointer-events: none;
   }
 
   /* ---------- Phone with the recreated topic list ---------- */
@@ -286,25 +319,72 @@
   }
   .t-time { font-size: 11px; color: var(--app-accent); }
 
+  /* Arthur's own phone mockup (transparent PNG-style webp), cropped by the
+     hero's bottom edge like the recreation. ?phone=html shows the recreation. */
+  .hero-mockup {
+    display: block;
+    flex: 0 0 auto;
+    width: 380px;
+    height: auto;
+    align-self: flex-start;
+    filter: drop-shadow(0 40px 60px color-mix(in srgb, var(--shadow-ink) 55%, transparent));
+    animation: rise 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .phone { display: none; }
+  :root[data-phone="html"] .phone { display: block; }
+  :root[data-phone="html"] .hero-mockup { display: none; }
+
   @keyframes rise {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: none; }
   }
 
-  /* ---------- Feature sections ---------- */
+  /* ---------- Feature stack: each feature slides up over the previous ---------- */
 
-  .feature {
+  .stack {
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 56px;
-    align-items: center;
-    padding-block: 88px;
-    border-bottom: 1px solid var(--hair);
+    gap: 32px;
+    padding-block: 72px 96px;
   }
-  .feature.flip { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
-  .feature.flip .feature-text { order: 2; }
 
-  .feature-text .lead { max-width: 40ch; }
+  .stack-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 48px;
+    align-items: center;
+    padding: 44px;
+    border-radius: 24px;
+    border: 1px solid var(--hair);
+    background: var(--ox-850);
+    box-shadow: 0 -28px 60px -30px color-mix(in srgb, var(--shadow-ink) 75%, transparent);
+    transform-origin: 50% 0%;
+  }
+
+  .stack-text .lead { max-width: 38ch; }
+
+  /* darkens a card as the next one slides over it (opacity set from JS) */
+  .stack-dim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    background: var(--ox-1000);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Sticky stacking only where a whole card fits on screen; elsewhere the
+     cards simply follow each other. */
+  @media (min-width: 961px) and (min-height: 800px) {
+    .stack-card {
+      position: sticky;
+      top: calc(28px + var(--i) * 14px);
+      height: calc(100vh - 120px);
+      max-height: 720px;
+      box-sizing: border-box;
+    }
+  }
 
   /* ---------- Cards (same system as the real components) ---------- */
 
@@ -313,7 +393,7 @@
     border: 1px solid var(--hair);
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 24px 48px -24px color-mix(in srgb, var(--shadow-ink) 70%, transparent);
   }
 
   .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
@@ -372,11 +452,12 @@
   /* poll in its pre-kick-off state: options to pick, no results yet */
   .poll.vote { gap: 8px; }
   .option {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 13.5px;
-    padding: 9px 12px;
+    padding: 9px 12px 15px;
     border-radius: 8px;
     background: rgba(246, 239, 230, 0.04);
     border: 1px solid var(--hair);
@@ -387,10 +468,49 @@
     border-radius: 50%;
     border: 1.5px solid var(--cream-dim);
     flex: 0 0 auto;
+    box-sizing: border-box;
+    transition: border-width 150ms ease, border-color 150ms ease, opacity 200ms ease;
   }
+  .option b { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; opacity: 0; }
+  /* result bar, as the real poll draws it: green for the winner, grey after */
+  .option s {
+    position: absolute;
+    left: 36px;
+    right: 12px;
+    bottom: 6px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(246, 239, 230, 0.45);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .option:first-child s { background: #5aad7b; }
+
+  /* the real result from the derby thread (26 voters, closed 23 Nov):
+     JS walks pick, press, reveal once the card is on screen */
+  .poll.picked .option:first-child i { border-width: 4.5px; border-color: var(--cream); }
+  .poll.pressed .vote-btn { transform: scale(0.97); }
+  .poll.voted .option:not(:first-child) i { opacity: 0.35; }
+  .poll.voted .option b { opacity: 1; transition: opacity 300ms ease 200ms; }
+  .poll.voted .option s {
+    transform: scaleX(var(--p));
+    transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--n) * 80ms);
+  }
+  .poll-foot { display: grid; margin-top: 6px; }
+  .poll-foot > * { grid-area: 1 / 1; align-self: center; }
+  .poll-total {
+    font-size: 12.5px;
+    color: var(--cream-dim);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .poll-total i { margin-right: 4px; font-size: 11px; }
+  .poll.voted .vote-btn { opacity: 0; }
+  .poll.voted .poll-total { opacity: 1; transition-delay: 120ms; }
+
   .vote-btn {
     justify-self: start;
-    margin-top: 6px;
+    transition: transform 120ms ease, opacity 200ms ease;
     font-size: 13px;
     font-weight: 700;
     padding: 7px 16px;
@@ -479,96 +599,466 @@
     margin-bottom: 3px;
   }
 
-  /* ---------- Lineup pitch (mirrors the formation plugin's render) ---------- */
-
-  .lineup {
-    margin: 0;
-    justify-self: center;
-    width: 100%;
-    max-width: 360px;
+  /* Player threads: three players take turns in the same spot. Every slide
+     sits in one grid cell, so the tallest sets the height and nothing jumps. */
+  .rotate { display: grid; }
+  .rotate > .slide {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition:
+      opacity 360ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 360ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      visibility 0s linear 360ms;
   }
-  .pitch {
+  .rotate > .slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .player-tabs { display: flex; gap: 22px; margin-top: 28px; }
+  .player-tabs button {
     position: relative;
-    aspect-ratio: 68 / 100;
-    border-radius: 6px;
-    overflow: hidden;
-    background:
-      repeating-linear-gradient(180deg, #4a8a3c 0 9.09%, #3f7a33 9.09% 18.18%);
-    box-shadow:
-      inset 0 0 0 1px rgba(0, 0, 0, 0.25),
-      0 24px 48px -24px rgba(0, 0, 0, 0.7);
-  }
-  .pitch::before {
-    content: "";
-    position: absolute;
-    inset: 3.5%;
-    border: 2px solid rgba(255, 255, 255, 0.85);
-  }
-  .ln { position: absolute; border: 2px solid rgba(255, 255, 255, 0.85); }
-  .ln-half { left: 3.5%; right: 3.5%; top: 50%; height: 0; border-width: 2px 0 0; }
-  .ln-circle { left: 50%; top: 50%; width: 26%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); }
-  .ln-spot { left: 50%; top: 50%; width: 5px; height: 5px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.9); transform: translate(-50%, -50%); }
-  .ln-box { left: 21%; right: 21%; height: 15%; }
-  .ln-six { left: 34%; right: 34%; height: 6%; }
-  .ln-arc { left: 50%; width: 22%; aspect-ratio: 2 / 1; transform: translateX(-50%); }
-  .ln-top { top: 3.5%; }
-  .ln-box.ln-top, .ln-six.ln-top { border-top: 0; }
-  .ln-arc.ln-top { top: 18.5%; border-top: 0; border-radius: 0 0 999px 999px; }
-  .ln-bottom { bottom: 3.5%; }
-  .ln-box.ln-bottom, .ln-six.ln-bottom { border-bottom: 0; }
-  .ln-arc.ln-bottom { bottom: 18.5%; border-bottom: 0; border-radius: 999px 999px 0 0; }
-
-  .pl {
-    position: absolute;
-    left: var(--x);
-    top: var(--y);
-    transform: translate(-50%, -50%);
-    display: grid;
-    justify-items: center;
-    gap: 3px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
-    white-space: nowrap;
-  }
-  .pl::before {
-    content: "";
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #d63a2f;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-  .lineup figcaption {
-    text-align: center;
+    font: inherit;
     font-size: 13px;
+    font-weight: 600;
+    color: var(--cream-dim);
+    background: none;
+    border: 0;
+    padding: 6px 0 10px;
+    cursor: pointer;
+    transition: color 140ms ease;
+  }
+  .player-tabs button:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 2px; }
+  .player-tabs .is-active { color: var(--cream); }
+  @media (hover: hover) and (pointer: fine) {
+    .player-tabs button:hover { color: var(--cream); }
+  }
+  /* the line under each name; on the active one it fills while autoplay runs */
+  .player-tabs i {
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--hair);
+    overflow: hidden;
+  }
+  .player-tabs i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--cream);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .player-tabs .is-active i::after { transform: scaleX(1); }
+  .players.autoplay .player-tabs .is-active i::after { animation: tab-fill 6s linear both; }
+  .players.autoplay.paused .player-tabs .is-active i::after { animation-play-state: paused; }
+  @keyframes tab-fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  /* ---------- Live match thread (styled like the logged-in red theme) ---------- */
+
+  .live { margin: 0; }
+
+  .thread {
+    background: var(--app-bg);
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 48px -24px color-mix(in srgb, var(--shadow-ink) 70%, transparent);
+  }
+
+  .thread-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 14px 18px;
+    background: var(--app-header);
+  }
+  .thread-score {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+  .thread-scorers { font-size: 12px; color: rgba(255, 255, 255, 0.78); }
+
+  .posts { list-style: none; margin: 0; padding: 4px 0; }
+
+  .post-row {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--app-hair);
+  }
+  .post-row:last-child { border-bottom: 0; }
+  .post-row .letter { width: 34px; height: 34px; }
+  .post-row p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--app-text);
+    overflow-wrap: anywhere;
+  }
+
+  /* reveal one by one once the section scrolls into view (JS adds .armed) */
+  .live.armed .post-row { opacity: 0; transform: translateY(8px); }
+  .live.armed.in .post-row {
+    animation: post-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i) * 420ms);
+  }
+  @keyframes post-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .live figcaption {
+    font-size: 12.5px;
     color: var(--cream-dim);
     margin-top: 10px;
   }
 
+  /* ---------- Extras: three smaller items below the stack ---------- */
+
+  .extras { padding-block: 8px 96px; }
+  .extras h2 { font-size: 28px; margin-bottom: 24px; }
+
+  .extras-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .extra {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    padding: 18px 18px 22px;
+    border: 1px solid var(--hair);
+    border-radius: 16px;
+  }
+  .extra h3 {
+    font-family: var(--font-display);
+    color: var(--title);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 4px 0 0;
+  }
+  .extra p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--cream-muted);
+  }
+
+  .extra-visual {
+    position: relative;
+    height: 200px;
+    box-sizing: border-box;
+    padding: 16px;
+    border-radius: 10px;
+    background: rgba(246, 239, 230, 0.03);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  /* the line-up, tilted back like a broadcast graphic and bleeding off the edges */
+  .extra-visual.pitch-view { padding: 0; perspective: 430px; perspective-origin: 50% 0%; }
+  .pitch-view .pitch-mini {
+    height: auto;
+    width: 92%;
+    transform: rotateX(56deg) translateY(-32%);
+    transform-origin: 50% 100%;
+  }
+  .pitch-view .dot { width: 12px; height: 12px; }
+
+  /* mini pitch: dots only, mirrors the formation plugin */
+  .pitch-mini {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 68 / 100;
+    border-radius: 4px;
+    overflow: hidden;
+    background: repeating-linear-gradient(180deg, #4a8a3c 0 9.09%, #3f7a33 9.09% 18.18%);
+  }
+  .pitch-mini::before {
+    content: "";
+    position: absolute;
+    inset: 4%;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+  }
+  .pitch-mini .ln { position: absolute; border: 1.5px solid rgba(255, 255, 255, 0.85); }
+  .pitch-mini .ln-half { left: 4%; right: 4%; top: 50%; height: 0; border-width: 1.5px 0 0; }
+  .pitch-mini .ln-circle { left: 50%; top: 50%; width: 28%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); }
+  .pitch-mini .ln-box { left: 22%; right: 22%; height: 15%; }
+  .pitch-mini .ln-top { top: 4%; border-top: 0; }
+  .pitch-mini .ln-bottom { bottom: 4%; border-bottom: 0; }
+  .pitch-mini .dot {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d63a2f;
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85);
+    transform: translate(-50%, -50%);
+  }
+
+  /* Bookie: a match card as the plugin shows it, mid-pick. The real buttons
+     also carry odds; those are left out rather than made up. */
+  .bet { width: 100%; display: grid; gap: 10px; }
+  .bet-head { display: grid; gap: 2px; }
+  .bet-head small { font-size: 11px; color: var(--cream-dim); }
+  .bet-head strong {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .picks { display: flex; gap: 6px; }
+  .picks span { flex: 1 1 auto; }
+  .picks span,
+  .stake span,
+  .stake b {
+    font-size: 12.5px;
+    padding: 9px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--hair);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .picks span { font-weight: 600; text-align: center; background: var(--ox-800); }
+  .picks .picked {
+    border-color: rgba(246, 239, 230, 0.55);
+    background: rgba(246, 239, 230, 0.08);
+  }
+  .stake { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+  .stake span { color: var(--cream-dim); background: rgba(0, 0, 0, 0.14); }
+  .stake b { font-weight: 700; padding-inline: 14px; border-color: rgba(246, 239, 230, 0.32); }
+
+  /* Arcade: the lobby's own game thumbnails, as the lobby shows them */
+  .games {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 8px;
+  }
+  .games span {
+    display: grid;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--cream-muted);
+    white-space: nowrap;
+  }
+  .games img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    border-radius: 6px;
+    border: 1px solid var(--hair);
+    background: var(--ox-800);
+    box-sizing: border-box;
+  }
+
+  /* ---------- Everywhere: who's behind the threads ---------- */
+
+  .everywhere {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: center;
+    padding-block: 96px 128px;
+    border-top: 1px solid var(--hair);
+  }
+  .everywhere h2 { font-size: 40px; }
+  .everywhere .lead { max-width: 40ch; }
+  .kickoff { margin: 0; }
+
+  /* one kick-off, read off the clocks where members watch from */
+  .clocks {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--hair);
+  }
+  .clocks li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 2.4em;
+    align-items: baseline;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--hair);
+    font-size: 14px;
+    color: var(--cream-muted);
+  }
+  .clocks li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .clocks time {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    color: var(--cream);
+  }
+  .clocks .day { font-size: 12.5px; color: var(--cream-dim); text-align: right; }
+  .clocks .home { color: var(--cream); font-weight: 600; }
+  .clocks .next-day { color: var(--cream); }
+  /* the visitor's own clock, found or slotted in by JS */
+  .clocks .you { color: var(--cream); }
+  .you-tag {
+    margin-left: 8px;
+    vertical-align: 1px;
+    color: var(--cream);
+    background: rgba(246, 239, 230, 0.1);
+    border-color: rgba(246, 239, 230, 0.3);
+  }
+
   /* ---------- Closing CTA ---------- */
 
-  .feature:has(+ .closing) { border-bottom: 0; }
-
-  /* full-bleed finale band: the page gets an ending, not just a beginning */
+  /* Finale: echoes the hero. Same crowd photo and tint, a different crop
+     (stands and flags), rising out of the page instead of fading into it. */
   .closing {
+    position: relative;
+    isolation: isolate;
     margin-inline: calc(50% - 50vw);
     padding-inline: calc(50vw - 50%);
-    padding-block: 96px;
-    border-top: 1px solid color-mix(in oklab, var(--gold) 40%, transparent);
-    background:
-      radial-gradient(ellipse 60% 120% at 85% 0%, rgba(150, 22, 32, 0.5), transparent 70%),
-      var(--ox-950);
+    padding-block: 128px 0;
+    border-top: 1px solid var(--hair);
   }
-  .closing h2 { font-size: 44px; }
-  .closing .actions { margin-top: 26px; }
+  .closing-photo {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    /* in its own colours this time, under a deep near-black veil */
+    background:
+      linear-gradient(var(--veil), var(--veil)),
+      url("https://images.unsplash.com/photo-1665413813191-3143ec934960?fm=jpg&q=70&w=2000&auto=format") center 72% / cover no-repeat;
+    -webkit-mask-image: linear-gradient(to top, #000 50%, transparent 100%);
+    mask-image: linear-gradient(to top, #000 50%, transparent 100%);
+    pointer-events: none;
+  }
+  .closing-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 32px 56px;
+  }
+  .closing h2 { font-size: 56px; line-height: 1.02; margin-bottom: 16px; }
+  .closing .actions { margin-top: 0; padding-bottom: 6px; }
+  .closing .footer-line { margin-top: 112px; }
 
   .footer-line {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
     padding-block: 40px 32px;
     font-size: 12px;
     color: var(--cream-dim);
   }
+  .footer-line p { margin: 0; }
+  .footer-line a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(246, 239, 230, 0.3);
+    text-underline-offset: 2px;
+  }
+  .footer-line a:hover { color: var(--cream); }
+
+  /* ---------- Look "brush" (the default; ?look=classic for the old one) ---------- */
+
+  /* Hero and closing band turn solid red and meet the dark page in a dry
+     brush stroke: an SVG mask of sideways noise cut at a hard threshold, so
+     there is no gradient anywhere. The hero goes full-bleed and carries the
+     stroke in its own last 180px, masked as one piece: the gaps cut through
+     the red and the phone alike, so the phone runs on behind the streaks. */
+  :root[data-look="brush"] .hero {
+    --shadow-ink: #3c0006;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: calc(50vw - 50%);
+    padding-bottom: 156px;
+    margin-bottom: -60px;
+    border-bottom: 0;
+    -webkit-mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - 179px) no-repeat,
+      url("assets/brush-rough.svg?v=1") center bottom / 3200px 180px no-repeat;
+    mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - 179px) no-repeat,
+      url("assets/brush-rough.svg?v=1") center bottom / 3200px 180px no-repeat;
+  }
+  :root[data-look="brush"] .hero-photo {
+    inset: 0;
+    /* the crowd photo in its own colours under a flat dark veil; &fill=red
+       swaps it for the solid red */
+    background:
+      linear-gradient(var(--photo-veil), var(--photo-veil)),
+      url("https://images.unsplash.com/photo-1665413813191-3143ec934960?fm=jpg&q=70&w=2000&auto=format") center 40% / cover no-repeat;
+    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  /* the phone runs on into the stroke; the shadow sits on the wrapper */
+  :root[data-look="brush"] .hero-visual {
+    clip-path: none;
+    filter: drop-shadow(0 24px 40px color-mix(in srgb, var(--shadow-ink) 35%, transparent));
+  }
+  :root[data-look="brush"][data-fill="red"] .hero-photo { background: var(--band); }
+  :root[data-look="brush"] .hero-mockup {
+    height: calc(100% + 170px);
+    object-fit: cover;
+    object-position: top;
+    filter: none;
+  }
+
+  /* the closing band carries the same stroke, flipped, in its own top 180px */
+  :root[data-look="brush"] .closing {
+    border-top: 0;
+    margin-top: -48px;
+    padding-top: 228px;
+    -webkit-mask:
+      url("assets/brush-rough-up.svg?v=1") center top / 3200px 180px no-repeat,
+      linear-gradient(#000 0 0) bottom / 100% calc(100% - 179px) no-repeat;
+    mask:
+      url("assets/brush-rough-up.svg?v=1") center top / 3200px 180px no-repeat,
+      linear-gradient(#000 0 0) bottom / 100% calc(100% - 179px) no-repeat;
+  }
+  :root[data-look="brush"] .closing-photo {
+    background:
+      linear-gradient(var(--photo-veil), var(--photo-veil)),
+      url("https://images.unsplash.com/photo-1665413813191-3143ec934960?fm=jpg&q=70&w=2000&auto=format") center 72% / cover no-repeat;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  :root[data-look="brush"][data-fill="red"] .closing-photo { background: var(--band); }
+  :root[data-look="brush"][data-fill="red"] .credit-crowd { display: none; }
+
+  /* on the red or the veiled photo, muted text would drop under 4.5:1:
+     full cream instead */
+  :root[data-look="brush"] .hero .lead,
+  :root[data-look="brush"] .hero .fine,
+  :root[data-look="brush"] .closing .lead,
+  :root[data-look="brush"] .footer-line { color: var(--cream); }
+  :root[data-look="brush"] .btn-login { border-color: var(--cream); }
 
   /* ---------- Mobile ---------- */
 
@@ -578,61 +1068,258 @@
     .hero-text { padding-bottom: 0; }
     .hero-visual { height: 460px; }
 
-    .feature,
-    .feature.flip { grid-template-columns: 1fr; gap: 32px; padding-block: 72px; }
-    .feature.flip .feature-text { order: 0; }
-    .feature > :not(.feature-text) { width: 100%; max-width: 560px; box-sizing: border-box; }
-    .feature > .lineup { max-width: 340px; justify-self: start; }
+    .stack-card { grid-template-columns: 1fr; gap: 32px; padding: 36px 32px; }
+    .extras-grid { grid-template-columns: 1fr; max-width: 560px; }
+    .closing-inner { grid-template-columns: 1fr; align-items: start; gap: 28px; }
+    .everywhere { grid-template-columns: 1fr; gap: 32px; }
+    .kickoff { max-width: 560px; }
+    .stack-card > :not(.stack-text):not(.stack-dim) { width: 100%; max-width: 560px; box-sizing: border-box; }
   }
 
   /* Phones: smaller type, full-width buttons, tighter cards */
   @media (max-width: 600px) {
     h1 { font-size: 38px; }
     h2 { font-size: 28px; }
-    .closing h2 { font-size: 32px; }
+    .closing h2 { font-size: 38px; }
     .lead { font-size: 16px; }
 
     .hero { padding-top: 40px; }
     .hero-text .logo { width: 210px; margin-bottom: 32px; }
     .hero-visual { height: 420px; }
-    .hero-visual::before { width: 380px; height: 380px; }
     .phone { width: 300px; }
+    .hero-mockup { width: 320px; }
     .actions .btn { flex: 1 1 auto; }
 
-    .feature,
-    .feature.flip { padding-block: 64px; }
+    .stack { gap: 20px; padding-block: 48px 72px; }
+    .extras { padding-bottom: 72px; }
+    .extras h2 { font-size: 24px; }
+    .extra-visual { height: 184px; }
+    .stack-card { padding: 28px 20px; border-radius: 20px; }
 
     .player { grid-template-columns: 96px 1fr; gap: 14px; }
     .shirt strong { font-size: 54px; }
     .card h3 { font-size: 22px; }
 
 
-    .closing { padding-block: 72px; }
+    .everywhere { padding-block: 72px 88px; }
+    .everywhere h2 { font-size: 30px; }
+    .clocks time { font-size: 23px; }
+
+    .closing { padding-block: 88px 0; }
+    :root[data-look="brush"] .hero { margin-bottom: -36px; }
+    .closing .footer-line { margin-top: 80px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .phone { animation: none; }
+    .phone, .hero-mockup { animation: none; }
+    .rotate > .slide { transform: none; }
+    .poll.voted .option s { transition: opacity 300ms ease; }
+    .option s { opacity: 0; }
+    .poll.voted .option s { opacity: 1; }
     .btn { transition: none; }
   }
 </style>
+
+<script type="module">
+  // Preview-only switches: ?hero=bw (photo in black and white),
+  // ?phone=html (the HTML recreation instead of Arthur's mockup),
+  // ?red=arsenal (reds retuned to arsenal.com's own web red),
+  // ?look=classic (the earlier tinted hero instead of the default
+  // dry-brush look), &fill=red (solid red instead of the photo)
+  const params = new URLSearchParams(location.search);
+  if (params.get("hero") === "bw") document.documentElement.dataset.hero = "bw";
+  if (params.get("phone") === "html") document.documentElement.dataset.phone = "html";
+  if (params.get("red")) document.documentElement.dataset.red = params.get("red");
+  if (params.get("look")) document.documentElement.dataset.look = params.get("look");
+  if (params.get("fill")) document.documentElement.dataset.fill = params.get("fill");
+
+  // Posts are visible by default; only when motion is welcome do we hide them
+  // and let them arrive one by one as the section comes into view.
+  const live = document.querySelector(".live");
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (live && !calm && "IntersectionObserver" in window) {
+    live.querySelectorAll(".post-row").forEach((row, i) => row.style.setProperty("--i", i));
+    live.classList.add("armed");
+    new IntersectionObserver((entries, observer) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        live.classList.add("in");
+        observer.disconnect();
+      }
+    }, { threshold: 0.35 }).observe(live);
+  }
+
+  // Match poll: once the card is on screen, pick "Arsenal win", press Vote
+  // and reveal the real result from the derby thread. Runs once; with
+  // reduced motion the result simply fades in.
+  const poll = document.querySelector(".poll.vote");
+  if (poll && "IntersectionObserver" in window) {
+    new IntersectionObserver((entries, observer) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      observer.disconnect();
+      if (calm) {
+        poll.classList.add("voted");
+        return;
+      }
+      setTimeout(() => poll.classList.add("picked"), 500);
+      setTimeout(() => poll.classList.add("pressed"), 950);
+      setTimeout(() => poll.classList.replace("pressed", "voted"), 1100);
+    }, { threshold: 0.6 }).observe(poll);
+  }
+
+  // Stack: while the next card slides up, the covered card recedes a touch
+  // and darkens. Scroll-linked, so the mapping is linear; skipped entirely
+  // when motion is unwelcome (the cards still stack, they just don't recede).
+  const cards = [...document.querySelectorAll(".stack-card")];
+  const stacking = matchMedia("(min-width: 961px) and (min-height: 800px)");
+  let stickTops = [];
+  let queued = false;
+
+  const measure = () => {
+    stickTops = cards.map((card) => parseFloat(getComputedStyle(card).top) || 0);
+  };
+
+  const update = () => {
+    queued = false;
+    cards.forEach((card, i) => {
+      const dim = card.querySelector(".stack-dim");
+      const next = cards[i + 1];
+      if (!next || !stacking.matches) {
+        card.style.transform = "";
+        dim.style.opacity = "";
+        return;
+      }
+      const travel = innerHeight - stickTops[i + 1];
+      const covered = (innerHeight - next.getBoundingClientRect().top) / travel;
+      const p = Math.min(1, Math.max(0, covered));
+      card.style.transform = `scale(${1 - 0.04 * p})`;
+      dim.style.opacity = String(0.45 * p);
+    });
+  };
+
+  if (cards.length && !calm) {
+    measure();
+    update();
+    addEventListener("scroll", () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    }, { passive: true });
+    addEventListener("resize", () => { measure(); update(); });
+  }
+
+  // Player threads: Saka, Ødegaard and Timber take turns. The line under
+  // the active name sets the pace: when it has filled, the next player comes
+  // in. It holds on hover, on focus and off screen; picking a name ends the
+  // turns, and with reduced motion they never start.
+  const players = document.querySelector(".players");
+  if (players) {
+    const tabs = [...players.querySelectorAll(".player-tabs button")];
+    const groups = [...players.querySelectorAll(".rotate")].map((group) => [...group.children]);
+    let current = 0;
+
+    const show = (n) => {
+      current = n;
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle("is-active", i === n);
+        if (i === n) tab.setAttribute("aria-current", "true");
+        else tab.removeAttribute("aria-current");
+      });
+      groups.forEach((slides) => slides.forEach((slide, i) => slide.classList.toggle("is-active", i === n)));
+    };
+
+    tabs.forEach((tab, i) => tab.addEventListener("click", () => {
+      players.classList.remove("autoplay");
+      show(i);
+    }));
+
+    if (!calm) {
+      const held = new Set(["offscreen"]);
+      const hold = (reason, on) => {
+        if (on) held.add(reason);
+        else held.delete(reason);
+        players.classList.toggle("paused", held.size > 0);
+      };
+      players.classList.add("autoplay", "paused");
+      players.addEventListener("animationend", (e) => {
+        if (e.animationName === "tab-fill" && players.classList.contains("autoplay")) {
+          show((current + 1) % tabs.length);
+        }
+      });
+      new IntersectionObserver(([entry]) => hold("offscreen", !entry.isIntersecting), { threshold: 0.5 })
+        .observe(players.querySelector(".card.player").parentElement);
+      players.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hold("hover", true); });
+      players.addEventListener("pointerleave", () => hold("hover", false));
+      players.addEventListener("focusin", () => hold("focus", true));
+      players.addEventListener("focusout", () => hold("focus", false));
+    }
+  }
+
+  // Kick-off clocks: find the visitor's own clock. A listed row on the same
+  // clock gets the "You" tag; otherwise their city is slotted in by offset.
+  // Preview-only: ?tz=America/Chicago pretends to be somewhere else.
+  const clocks = document.querySelector(".clocks");
+  if (clocks) {
+    try {
+      const kickOff = new Date("2025-11-23T16:30:00Z");
+      const zone = params.get("tz") || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const at = Object.fromEntries(
+        new Intl.DateTimeFormat("en-GB", {
+          timeZone: zone, hourCycle: "h23", weekday: "short",
+          year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
+        }).formatToParts(kickOff).map((part) => [part.type, part.value])
+      );
+      // minutes ahead of UTC at kick-off
+      const offset = (Date.UTC(at.year, at.month - 1, at.day, at.hour, at.minute) - kickOff) / 60000;
+      const offsetOf = (row) => {
+        const [, sign, h, m] = row.querySelector("time").dateTime.match(/([+-])(\d\d):(\d\d)$/);
+        return (sign === "-" ? -1 : 1) * (h * 60 + Number(m));
+      };
+
+      const rows = [...clocks.children];
+      let you = rows.find((row) => offsetOf(row) === offset);
+      if (!you) {
+        const city = zone.includes("/") ? zone.split("/").pop().replaceAll("_", " ") : "Your time";
+        const abs = Math.abs(offset);
+        const stamp = `${offset < 0 ? "-" : "+"}${String(Math.floor(abs / 60)).padStart(2, "0")}:${String(abs % 60).padStart(2, "0")}`;
+        you = document.createElement("li");
+        you.innerHTML = `<span></span><time></time><span class="day"></span>`;
+        you.children[0].textContent = city;
+        you.children[1].textContent = `${at.hour}:${at.minute}`;
+        you.children[1].dateTime = `${at.year}-${at.month}-${at.day}T${at.hour}:${at.minute}${stamp}`;
+        you.children[2].textContent = at.weekday;
+        if (at.weekday !== "Sun") you.children[2].classList.add("next-day");
+        clocks.insertBefore(you, rows.find((row) => offsetOf(row) > offset) || null);
+      }
+      const tag = document.createElement("span");
+      tag.className = "badge you-tag";
+      tag.textContent = "You";
+      you.firstElementChild.append(tag);
+      you.classList.add("you");
+    } catch {
+      // unknown time zone: the listed clocks stand on their own
+    }
+  }
+</script>
 
 <main class="wrap">
 
   <!-- Hero -->
   <section class="hero">
+    <div class="hero-photo" aria-hidden="true"></div>
     <div class="hero-text">
       <img class="logo" src="assets/oa-logo-full.svg" alt="Online Arsenal" width="403" height="69">
-      <p class="eyebrow">Arsenal fan forum</p>
-      <h1>The forum Gooners have argued&nbsp;on since&nbsp;2003.</h1>
-      <p class="lead">A thread for every match, every player and every transfer rumour, with plenty of Gooners ready to argue the other side.</p>
+      <h1>We've been talking Arsenal since&nbsp;2003.</h1>
+      <p class="lead">A supporters' forum with a thread for every match, every player and every transfer rumour, and fans from all over ready to tell you you're&nbsp;wrong.</p>
       <div class="actions">
         <button type="button" class="btn btn-join">Join the forum</button>
         <button type="button" class="btn btn-login">Log in</button>
       </div>
-      <p class="fine">Free to join.</p>
+      <p class="fine">Free to join. No ads, ever.</p>
     </div>
 
     <div class="hero-visual" aria-hidden="true">
+      <img class="hero-mockup" src="assets/hero-mockup.webp?v=2" alt="" width="988" height="2000">
       <div class="phone">
         <div class="screen">
           <div class="app-header">
@@ -686,12 +1373,15 @@
     </div>
   </section>
 
+  <!-- Features: a stack, each card slides up over the previous -->
+  <section class="stack">
+
   <!-- Match threads -->
-  <section class="feature">
-    <div class="feature-text">
-      <p class="eyebrow">Match threads</p>
-      <h2>Every match gets its own thread.</h2>
-      <p class="lead">Call the result before kick-off, react as it happens, then see who got it right.</p>
+  <article class="stack-card" style="--i: 0">
+    <div class="stack-dim" aria-hidden="true"></div>
+    <div class="stack-text">
+      <h2>Talk every match through, from team news to full&nbsp;time.</h2>
+      <p class="lead">Each game gets its own matchday thread. Call the result before kick-off, suffer through the ninety together, then do the post-mortem.</p>
     </div>
     <div class="card" aria-hidden="true">
       <div class="badges">
@@ -702,84 +1392,220 @@
       <p class="sub">Emirates Stadium</p>
       <img class="photo" src="https://images.unsplash.com/photo-1577224682146-dd7843c88d33?fm=jpg&amp;q=75&amp;w=1200&amp;auto=format" alt="" loading="lazy" width="1200" height="800">
       <div class="poll vote">
-        <div class="option"><i></i>Arsenal win</div>
-        <div class="option"><i></i>Draw</div>
-        <div class="option"><i></i>Tottenham win</div>
-        <span class="vote-btn">Vote</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Lineups -->
-  <section class="feature flip">
-    <div class="feature-text">
-      <p class="eyebrow">Lineups</p>
-      <h2>Pick your starting XI.</h2>
-      <p class="lead">Choose a formation, type eleven names, and your post turns into a pitch. Handy for the weekly argument about who should start.</p>
-    </div>
-    <figure class="lineup" aria-hidden="true">
-      <div class="pitch">
-        <span class="ln ln-half"></span>
-        <span class="ln ln-circle"></span>
-        <span class="ln ln-spot"></span>
-        <span class="ln ln-box ln-top"></span>
-        <span class="ln ln-six ln-top"></span>
-        <span class="ln ln-arc ln-top"></span>
-        <span class="ln ln-box ln-bottom"></span>
-        <span class="ln ln-six ln-bottom"></span>
-        <span class="ln ln-arc ln-bottom"></span>
-
-        <span class="pl" style="--x:50%; --y:12%">Havertz</span>
-        <span class="pl" style="--x:17%; --y:37%">Madueke</span>
-        <span class="pl" style="--x:50%; --y:37%">Odegaard</span>
-        <span class="pl" style="--x:83%; --y:37%">Saka</span>
-        <span class="pl" style="--x:34%; --y:57%">Zubimendi</span>
-        <span class="pl" style="--x:66%; --y:57%">Rice</span>
-        <span class="pl" style="--x:11%; --y:72%">MLS</span>
-        <span class="pl" style="--x:31%; --y:72%">Gabriel</span>
-        <span class="pl" style="--x:69%; --y:72%">Saliba</span>
-        <span class="pl" style="--x:89%; --y:72%">Timber</span>
-        <span class="pl" style="--x:50%; --y:85%">Raya</span>
-      </div>
-      <figcaption>4-2-3-1</figcaption>
-    </figure>
-  </section>
-
-  <!-- Player threads -->
-  <section class="feature">
-    <div class="feature-text">
-      <p class="eyebrow">Player threads</p>
-      <h2>Every player gets one too.</h2>
-      <p class="lead">Each thread follows a player from the first transfer rumour to the farewell, with the essentials pinned at the top.</p>
-    </div>
-    <div class="card player" aria-hidden="true">
-      <div class="shirt"><small>SAKA</small><strong>7</strong></div>
-      <div>
-        <div class="badges">
-          <span class="badge accent">Winger</span>
-          <span class="badge">England</span>
+        <div class="option" style="--p: 0.88; --n: 0"><i></i>Arsenal win<b>88%</b><s></s></div>
+        <div class="option" style="--p: 0.08; --n: 1"><i></i>Draw<b>8%</b><s></s></div>
+        <div class="option" style="--p: 0.04; --n: 2"><i></i>Spurs win<b>4%</b><s></s></div>
+        <div class="poll-foot">
+          <span class="vote-btn">Vote</span>
+          <span class="poll-total"><i class="fa-solid fa-lock"></i>26 voters · Closed 23 Nov</span>
         </div>
-        <h3>Bukayo Saka</h3>
-        <p class="sub">Bukayo Ayoyinka Temidayo Saka · 5 September 2001, Ealing</p>
-      </div>
-      <p class="bio">Homegrown, hero-of-the-North-Bank type. Right winger who cuts in on his left; runs at defenders in a way this club has not had for a long time.</p>
-      <div class="facts">
-        <div data-label="Position">RW</div>
-        <div data-label="Contract">June 2030</div>
-        <div data-label="Squad number">7</div>
       </div>
     </div>
+  </article>
+
+  <!-- Live: the match thread during the game -->
+  <article class="stack-card" style="--i: 1">
+    <div class="stack-dim" aria-hidden="true"></div>
+    <div class="stack-text">
+      <h2>Celebrate every goal in capital&nbsp;letters.</h2>
+      <p class="lead">Seconds after it hits the net, the whole thread loses its mind. Scenes.</p>
+    </div>
+    <figure class="live" aria-label="Reactions from the match thread">
+      <div class="thread">
+        <div class="thread-head">
+          <span class="thread-score">Arsenal 4–1 Tottenham</span>
+          <span class="thread-scorers">Trossard 36′ · Eze 41′ 46′ 76′</span>
+        </div>
+        <ol class="posts">
+          <li class="post-row"><span class="letter" style="background:#8a6a3c">E</span><p>EZEEEEEEEEEE</p></li>
+          <li class="post-row"><span class="letter" style="background:#5b7fa6">S</span><p>That run from Tross and the pass from Merino. Just class.</p></li>
+          <li class="post-row"><span class="letter" style="background:#9a5a7f">A</span><p>EZEDINHOOOOO</p></li>
+          <li class="post-row"><span class="letter" style="background:#8a6a3c">E</span><p>SBDHSJKSUFHDJSKSISHSHSH</p></li>
+          <li class="post-row"><span class="letter" style="background:#6f8a4f">S</span><p>EZECHUKWU!!! What a goal!!</p></li>
+        </ol>
+      </div>
+      <figcaption>From the match thread, North London derby, 23 November 2025.</figcaption>
+    </figure>
+  </article>
+
+  <!-- Player threads: Saka, Ødegaard and Timber take turns -->
+  <article class="stack-card players" style="--i: 2">
+    <div class="stack-dim" aria-hidden="true"></div>
+    <div class="stack-text">
+      <div class="rotate">
+        <h2 class="slide is-active">Starboy in the form of his life? Talk about it in his&nbsp;thread.</h2>
+        <h2 class="slide">Ode pulling the strings again? Talk about it in his&nbsp;thread.</h2>
+        <h2 class="slide">Timber the best right-back in the league? Talk about it in his&nbsp;thread.</h2>
+      </div>
+      <p class="lead">Every first-team player has his own thread: the essentials pinned up top, every worldie and every wobble underneath.</p>
+      <div class="player-tabs">
+        <button type="button" class="is-active" aria-current="true">Saka<i></i></button>
+        <button type="button">Ødegaard<i></i></button>
+        <button type="button">Timber<i></i></button>
+      </div>
+    </div>
+    <div class="rotate" aria-hidden="true">
+      <div class="card player slide is-active">
+        <div class="shirt"><small>SAKA</small><strong>7</strong></div>
+        <div>
+          <div class="badges">
+            <span class="badge accent">Winger</span>
+            <span class="badge">England</span>
+          </div>
+          <h3>Bukayo Saka</h3>
+          <p class="sub">Bukayo Ayoyinka Temidayo Saka · 5 September 2001, Ealing</p>
+        </div>
+        <p class="bio">Hale End's finest. Cuts in on his left, terrorises full-backs and has carried the right wing for years.</p>
+        <div class="facts">
+          <div data-label="Position">RW</div>
+          <div data-label="Contract">June 2030</div>
+          <div data-label="Squad number">7</div>
+        </div>
+      </div>
+      <div class="card player slide">
+        <div class="shirt"><small>ØDEGAARD</small><strong>8</strong></div>
+        <div>
+          <div class="badges">
+            <span class="badge accent">Midfielder</span>
+            <span class="badge">Norway</span>
+          </div>
+          <h3>Martin Ødegaard</h3>
+          <p class="sub">Martin Ødegaard · 17 December 1998, Drammen</p>
+        </div>
+        <p class="bio">Came on loan from Real Madrid in 2021 and signed for good that summer. Captain since 2022, and still sees passes nobody else does.</p>
+        <div class="facts">
+          <div data-label="Position">AM, CM</div>
+          <div data-label="Contract">June 2028</div>
+          <div data-label="Squad number">8</div>
+        </div>
+      </div>
+      <div class="card player slide">
+        <div class="shirt"><small>TIMBER</small><strong>12</strong></div>
+        <div>
+          <div class="badges">
+            <span class="badge accent">Defender</span>
+            <span class="badge">Netherlands</span>
+          </div>
+          <h3>Jurriën Timber</h3>
+          <p class="sub">Jurriën David Norman Timber · 17 June 2001, Utrecht</p>
+        </div>
+        <p class="bio">Signed from Ajax in 2023 and lost nearly all of his first season to an ACL. Since then, a right-back who drifts inside like a sixth midfielder.</p>
+        <div class="facts">
+          <div data-label="Position">RB, CB</div>
+          <div data-label="Contract">June 2028</div>
+          <div data-label="Squad number">12</div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  </section>
+
+  <!-- Extras: smaller, three across -->
+  <section class="extras">
+    <h2>Plus a few extras for the international&nbsp;break.</h2>
+    <div class="extras-grid">
+      <article class="extra">
+        <div class="extra-visual pitch-view" aria-hidden="true">
+          <div class="pitch-mini">
+            <span class="ln ln-half"></span>
+            <span class="ln ln-circle"></span>
+            <span class="ln ln-box ln-top"></span>
+            <span class="ln ln-box ln-bottom"></span>
+            <span class="dot" style="--x:50%; --y:12%"></span>
+            <span class="dot" style="--x:17%; --y:36%"></span>
+            <span class="dot" style="--x:50%; --y:36%"></span>
+            <span class="dot" style="--x:83%; --y:36%"></span>
+            <span class="dot" style="--x:34%; --y:56%"></span>
+            <span class="dot" style="--x:66%; --y:56%"></span>
+            <span class="dot" style="--x:12%; --y:72%"></span>
+            <span class="dot" style="--x:37%; --y:72%"></span>
+            <span class="dot" style="--x:63%; --y:72%"></span>
+            <span class="dot" style="--x:88%; --y:72%"></span>
+            <span class="dot" style="--x:50%; --y:88%"></span>
+          </div>
+        </div>
+        <h3>Be the gaffer: pick the XI you'd send&nbsp;out.</h3>
+        <p>Type eleven names and your post turns into a pitch, in the formation of your choice.</p>
+      </article>
+      <article class="extra">
+        <div class="extra-visual" aria-hidden="true">
+          <div class="bet">
+            <div class="bet-head">
+              <small>Premier League</small>
+              <strong>Arsenal vs Tottenham</strong>
+            </div>
+            <div class="picks">
+              <span class="picked">Arsenal</span>
+              <span>Draw</span>
+              <span>Tottenham</span>
+            </div>
+            <div class="stake">
+              <span>Amount (min 10)</span>
+              <b>Place bet</b>
+            </div>
+          </div>
+        </div>
+        <h3>Fancy yourself as the forum's best&nbsp;tipster?</h3>
+        <p>Prove it in Bookie: back your calls with virtual coins and climb the league table. No real money involved.</p>
+      </article>
+      <article class="extra">
+        <div class="extra-visual" aria-hidden="true">
+          <div class="games">
+            <span><img src="assets/arcade/penalty.svg" alt="" width="320" height="180">Penalty</span>
+            <span><img src="assets/arcade/keepie.svg" alt="" width="320" height="180">Keepie Uppie</span>
+            <span><img src="assets/arcade/dribble.svg" alt="" width="320" height="180">Dribble</span>
+            <span><img src="assets/arcade/twentyfortyeight.svg" alt="" width="320" height="180">2048</span>
+            <span><img src="assets/arcade/snake.svg" alt="" width="320" height="180">Snake</span>
+            <span><img src="assets/arcade/breakout.svg" alt="" width="320" height="180">Breakout</span>
+          </div>
+        </div>
+        <h3>Bragging rights, settled every month in the&nbsp;Arcade.</h3>
+        <p>A dozen games, from Penalty to 2048, each with its own leaderboard.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Everywhere: most members never met, one kick-off on every clock -->
+  <section class="everywhere">
+    <div>
+      <h2>Most of us have never met. All of us lost sleep over the same&nbsp;game.</h2>
+      <p class="lead">Mostly UK, with the rest spread from New&nbsp;York to Sydney. Some of us make it to the ground, plenty are the only Arsenal fan in the room. On here, the room is&nbsp;full.</p>
+    </div>
+    <figure class="kickoff card" aria-label="Kick-off of Arsenal vs Tottenham in local time">
+      <div class="badges">
+        <span class="badge accent">Premier League</span>
+        <span class="badge">North London derby</span>
+      </div>
+      <h3>Arsenal vs Tottenham</h3>
+      <p class="sub">Kick-off, 23 November 2025</p>
+      <ol class="clocks">
+        <li><span>New York</span><time datetime="2025-11-23T11:30-05:00">11:30</time><span class="day">Sun</span></li>
+        <li class="home"><span>London</span><time datetime="2025-11-23T16:30+00:00">16:30</time><span class="day">Sun</span></li>
+        <li><span>Amsterdam, Berlin, Stockholm</span><time datetime="2025-11-23T17:30+01:00">17:30</time><span class="day">Sun</span></li>
+        <li><span>Mumbai</span><time datetime="2025-11-23T22:00+05:30">22:00</time><span class="day">Sun</span></li>
+        <li><span>Sydney</span><time datetime="2025-11-24T03:30+11:00">03:30</time><span class="day next-day">Mon</span></li>
+      </ol>
+    </figure>
   </section>
 
   <!-- Closing CTA -->
   <section class="closing">
-    <h2>Pull up a seat.</h2>
-    <p class="lead">Join for free, or log in to pick up where you left off.</p>
-    <div class="actions">
-      <button type="button" class="btn btn-join">Join the forum</button>
-      <button type="button" class="btn btn-login">Log in</button>
+    <div class="closing-photo" aria-hidden="true"></div>
+    <div class="closing-inner">
+      <div>
+        <h2>Pull up a seat.</h2>
+        <p class="lead">No waiting list, unlike the Emirates. No ads either: members chip in for the hosting, so it stays that way. Join for free, or log in to pick up where you left&nbsp;off.</p>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-join">Join the forum</button>
+        <button type="button" class="btn btn-login">Log in</button>
+      </div>
     </div>
+    <footer class="footer-line">
+      <p>Online Arsenal, est. 2003. Not affiliated with Arsenal&nbsp;FC.</p>
+      <p>Photos by <span class="credit-crowd"><a href="https://unsplash.com/@james_open?utm_source=online_arsenal&amp;utm_medium=referral">James Kirkup</a> and </span><a href="https://unsplash.com/@whodunelson?utm_source=online_arsenal&amp;utm_medium=referral">Nelson Ndongala</a> on <a href="https://unsplash.com/?utm_source=online_arsenal&amp;utm_medium=referral">Unsplash</a></p>
+    </footer>
   </section>
 
-  <p class="footer-line">Powered by Gooners since 2003</p>
 </main>

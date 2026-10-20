@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="180" viewBox="0 0 3200 180">
+  <defs>
+    <linearGradient id="f" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="0.25" stop-color="#fff" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="d" x="-5%" y="0" width="110%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0012 0.26" numOctaves="3" seed="21" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="nA"/>
+      <feComposite in="SourceGraphic" in2="nA" operator="arithmetic" k1="0" k2="1.3" k3="1.05" k4="-0.82" result="sum"/>
+      <feComponentTransfer in="sum" result="cut"><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer>
+      <feFlood flood-color="#c3001e" result="red"/>
+      <feComposite in="red" in2="cut" operator="in" result="paint"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.002 0.01" numOctaves="1" seed="2" result="wave"/>
+      <feDisplacementMap in="paint" in2="wave" scale="22" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <g transform="translate(0 180) scale(1 -1)">
+  <rect x="-80" width="3360" height="180" fill="url(#f)" filter="url(#d)"/>
+  </g>
+</svg>
