@@ -4,7 +4,7 @@
 <title>OA welcome page</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
 <style>
@@ -19,6 +19,8 @@
     --veil: rgba(14, 3, 5, 0.8); /* over the closing photo */
     --shadow-ink: #000;  /* colour of every drop shadow */
     --band: #c3001e;     /* solid red of hero and closing with &fill=red */
+    --seats-img: url("https://images.unsplash.com/photo-1686053246085-33ff8b627ce8?fm=jpg&q=70&w=2000&auto=format");
+    --seats-pos: center 62%;
     --photo-veil: rgba(14, 3, 5, 0.74); /* over the hero and closing photo: cream text stays 8.7:1 even over pure white */
     --club-red: #db0007;
     --gold: #eaaa00;
@@ -37,10 +39,21 @@
     --app-hot: #e3a54a;
     --app-hair: rgba(255, 255, 255, 0.08);
 
+    /* the forum's own dark scheme (admin colour palette), as in the hero mockup */
+    --forum-bg: #131513;
+    --forum-surface: #1a1a1a;
+    --forum-text: #f5f5f5;
+    --forum-accent: #26b575;
+    --forum-accent-hi: #39fea5;
+    --forum-selected: #062d1b;
+
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-num: "SF Pro Display", -apple-system, "Helvetica Neue", Arial, sans-serif;
     /* display face: echoes the logo lettering; running text stays system */
     --font-display: "Outfit", var(--font-sans);
+    /* section notes: a hand-lettered brush face, kin to the dry-brush edges */
+    --font-note: "Caveat Brush", "Outfit", var(--font-sans);
+    --note: #fe4f4f;     /* arsenal.com's light red: 4.5:1 or better on every dark surface here */
     /* page-level titles: cream, so gold stays reserved for the logo and Join button */
     --title: var(--cream);
 
@@ -106,6 +119,19 @@
   h1 { font-size: 56px; line-height: 1.02; margin-bottom: 18px; }
   h2 { font-size: 36px; line-height: 1.08; margin-bottom: 14px; }
 
+  /* a scribbled note above a section title: hand-lettered, slightly
+     tilted, bright red. Not an eyebrow: no caps, no tracking. */
+  .note {
+    display: inline-block;
+    margin: 0 0 12px;
+    font-family: var(--font-note);
+    font-size: 25px;
+    line-height: 1;
+    color: var(--note);
+    transform: rotate(-2deg);
+    transform-origin: left bottom;
+  }
+
   .lead {
     font-size: 17px;
     line-height: 1.6;
@@ -136,9 +162,9 @@
     padding: 12px 22px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
   }
-  .btn:active { transform: translateY(1px); }
+  .btn:active { transform: scale(0.97); }
   .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
   .btn-join { background: var(--gold); color: var(--ox-900); border: 1px solid var(--gold); }
@@ -602,6 +628,7 @@
   /* Player threads: three players take turns in the same spot. Every slide
      sits in one grid cell, so the tallest sets the height and nothing jumps. */
   .rotate { display: grid; }
+  .stack-text .rotate > .slide { align-self: end; }
   .rotate > .slide {
     grid-area: 1 / 1;
     opacity: 0;
@@ -628,6 +655,7 @@
     color: var(--cream-dim);
     background: none;
     border: 0;
+    min-height: 44px;
     padding: 6px 0 10px;
     cursor: pointer;
     transition: color 140ms ease;
@@ -664,7 +692,14 @@
 
   /* ---------- Live match thread (styled like the logged-in red theme) ---------- */
 
-  .live { margin: 0; }
+  /* the match thread in the forum's own dark scheme, same as the phone */
+  .live {
+    margin: 0;
+    --app-bg: var(--forum-bg);
+    --app-header: var(--forum-surface);
+    --app-text: var(--forum-text);
+    --app-hair: rgba(245, 245, 245, 0.08);
+  }
 
   .thread {
     background: var(--app-bg);
@@ -779,7 +814,7 @@
   .extra-visual.pitch-view { padding: 0; perspective: 430px; perspective-origin: 50% 0%; }
   .pitch-view .pitch-mini {
     height: auto;
-    width: 92%;
+    width: min(92%, 276px); /* wider boxes would push the far goal off the top */
     transform: rotateX(56deg) translateY(-32%);
     transform-origin: 50% 100%;
   }
@@ -817,6 +852,21 @@
     box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85);
     transform: translate(-50%, -50%);
   }
+
+  /* All three extras sit on the forum's own dark scheme, like the phone
+     up top, so they read as real screens rather than glassy tiles */
+  .extra-visual.screen { background: var(--forum-bg); color: var(--forum-text); }
+  .screen .bet-head small { color: rgba(245, 245, 245, 0.6); }
+  .screen .picks span { background: var(--forum-surface); border-color: rgba(245, 245, 245, 0.12); }
+  .screen .picks .picked {
+    background: var(--forum-selected);
+    border-color: var(--forum-accent);
+    color: var(--forum-accent-hi);
+  }
+  .screen .stake span { background: var(--forum-surface); border-color: rgba(245, 245, 245, 0.12); color: rgba(245, 245, 245, 0.6); }
+  .screen .stake b { background: var(--forum-accent); border-color: var(--forum-accent); color: var(--forum-bg); }
+  .screen .games span { color: rgba(245, 245, 245, 0.72); }
+  .screen .games img { background: var(--forum-surface); border-color: rgba(245, 245, 245, 0.1); }
 
   /* Bookie: a match card as the plugin shows it, mid-pick. The real buttons
      also carry odds; those are left out rather than made up. */
@@ -921,17 +971,16 @@
     color: var(--cream);
   }
   .clocks .day { font-size: 12.5px; color: var(--cream-dim); text-align: right; }
+  /* city names stay on one line; a long one fades out on the right */
+  .clocks li > span:first-child {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
   .clocks .home { color: var(--cream); font-weight: 600; }
   .clocks .next-day { color: var(--cream); }
-  /* the visitor's own clock, found or slotted in by JS */
-  .clocks .you { color: var(--cream); }
-  .you-tag {
-    margin-left: 8px;
-    vertical-align: 1px;
-    color: var(--cream);
-    background: rgba(246, 239, 230, 0.1);
-    border-color: rgba(246, 239, 230, 0.3);
-  }
 
   /* ---------- Closing CTA ---------- */
 
@@ -969,6 +1018,7 @@
 
   .footer-line {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 8px 24px;
@@ -977,6 +1027,9 @@
     color: var(--cream-dim);
   }
   .footer-line p { margin: 0; }
+  /* sign-off: the small OA mark beside the line that names it */
+  .footer-brand { display: flex; align-items: center; gap: 12px; }
+  .footer-logo { display: block; width: auto; height: 28px; flex: 0 0 auto; }
   .footer-line a {
     color: inherit;
     text-decoration: underline;
@@ -1042,15 +1095,59 @@
       url("assets/brush-rough-up.svg?v=1") center top / 3200px 180px no-repeat,
       linear-gradient(#000 0 0) bottom / 100% calc(100% - 179px) no-repeat;
   }
+  /* "Pull up a seat." over literal seats: empty Emirates rows by Huy Phan
+     (Unsplash). ?seats=b swaps in the front-on shot. */
   :root[data-look="brush"] .closing-photo {
     background:
       linear-gradient(var(--photo-veil), var(--photo-veil)),
-      url("https://images.unsplash.com/photo-1665413813191-3143ec934960?fm=jpg&q=70&w=2000&auto=format") center 72% / cover no-repeat;
+      var(--seats-img) var(--seats-pos) / cover no-repeat;
     -webkit-mask-image: none;
     mask-image: none;
   }
   :root[data-look="brush"][data-fill="red"] .closing-photo { background: var(--band); }
+  :root[data-seats="b"] {
+    --seats-img: url("https://images.unsplash.com/photo-1686053245874-a3a93d698353?fm=jpg&q=70&w=2000&auto=format");
+    --seats-pos: center 70%;
+  }
+  .credit-seats { display: none; }
+  :root[data-look="brush"]:not([data-fill="red"]) .credit-and { display: none; }
+  :root[data-look="brush"]:not([data-fill="red"]) .credit-seats { display: inline; }
   :root[data-look="brush"][data-fill="red"] .credit-crowd { display: none; }
+
+  /* Curtain reveal: the closing band waits pinned to the bottom of the
+     screen, behind the page, and the page lifts off it like a curtain with
+     the dry-brush stroke along its hem. JS adds .curtain-on only when the
+     band fits the screen (else its title would stay hidden) and motion is
+     welcome; without it the band keeps its own stroke as before. */
+  :root[data-look="brush"].curtain-on .curtain {
+    position: relative;
+    z-index: 1;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: calc(50vw - 50%);
+    background: var(--grain), var(--ox-900);
+    background-blend-mode: overlay, normal;
+  }
+  :root[data-look="brush"].curtain-on .curtain::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% - 24px); /* overlap: the stroke's top row has pinholes */
+    height: 180px;
+    background: var(--grain), var(--ox-900);
+    background-blend-mode: overlay, normal;
+    -webkit-mask: url("assets/brush-rough.svg?v=1") center top / 3200px 180px no-repeat;
+    mask: url("assets/brush-rough.svg?v=1") center top / 3200px 180px no-repeat;
+    pointer-events: none;
+  }
+  :root[data-look="brush"].curtain-on .closing {
+    position: sticky;
+    bottom: 0;
+    z-index: 0;
+    margin-top: 0;
+    -webkit-mask: none;
+    mask: none;
+  }
 
   /* on the red or the veiled photo, muted text would drop under 4.5:1:
      full cream instead */
@@ -1093,7 +1190,6 @@
     .stack { gap: 20px; padding-block: 48px 72px; }
     .extras { padding-bottom: 72px; }
     .extras h2 { font-size: 24px; }
-    .extra-visual { height: 184px; }
     .stack-card { padding: 28px 20px; border-radius: 20px; }
 
     .player { grid-template-columns: 96px 1fr; gap: 14px; }
@@ -1107,6 +1203,8 @@
 
     .closing { padding-block: 88px 0; }
     :root[data-look="brush"] .hero { margin-bottom: -36px; }
+    /* narrow crop: zoom in on the seats so the banners above drop out */
+    :root[data-look="brush"] .closing-photo { background-size: auto, auto 150%; background-position: 0 0, 35% 100%; }
     .closing .footer-line { margin-top: 80px; }
   }
 
@@ -1116,7 +1214,8 @@
     .poll.voted .option s { transition: opacity 300ms ease; }
     .option s { opacity: 0; }
     .poll.voted .option s { opacity: 1; }
-    .btn { transition: none; }
+    .btn { transition: background-color 140ms ease, border-color 140ms ease; }
+    .btn:active { transform: none; }
   }
 </style>
 
@@ -1132,6 +1231,7 @@
   if (params.get("red")) document.documentElement.dataset.red = params.get("red");
   if (params.get("look")) document.documentElement.dataset.look = params.get("look");
   if (params.get("fill")) document.documentElement.dataset.fill = params.get("fill");
+  if (params.get("seats")) document.documentElement.dataset.seats = params.get("seats");
 
   // Posts are visible by default; only when motion is welcome do we hide them
   // and let them arrive one by one as the section comes into view.
@@ -1255,54 +1355,20 @@
     }
   }
 
-  // Kick-off clocks: find the visitor's own clock. A listed row on the same
-  // clock gets the "You" tag; otherwise their city is slotted in by offset.
-  // Preview-only: ?tz=America/Chicago pretends to be somewhere else.
-  const clocks = document.querySelector(".clocks");
-  if (clocks) {
-    try {
-      const kickOff = new Date("2025-11-23T16:30:00Z");
-      const zone = params.get("tz") || Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const at = Object.fromEntries(
-        new Intl.DateTimeFormat("en-GB", {
-          timeZone: zone, hourCycle: "h23", weekday: "short",
-          year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
-        }).formatToParts(kickOff).map((part) => [part.type, part.value])
-      );
-      // minutes ahead of UTC at kick-off
-      const offset = (Date.UTC(at.year, at.month - 1, at.day, at.hour, at.minute) - kickOff) / 60000;
-      const offsetOf = (row) => {
-        const [, sign, h, m] = row.querySelector("time").dateTime.match(/([+-])(\d\d):(\d\d)$/);
-        return (sign === "-" ? -1 : 1) * (h * 60 + Number(m));
-      };
+  // Curtain reveal: on only when the closing band fits the screen and
+  // motion is welcome (see the .curtain-on styles).
+  const closing = document.querySelector(".closing");
+  const fitCurtain = () => {
+    const on = !calm && closing && closing.offsetHeight <= innerHeight - 24;
+    document.documentElement.classList.toggle("curtain-on", on);
+  };
+  fitCurtain();
+  addEventListener("resize", fitCurtain);
 
-      const rows = [...clocks.children];
-      let you = rows.find((row) => offsetOf(row) === offset);
-      if (!you) {
-        const city = zone.includes("/") ? zone.split("/").pop().replaceAll("_", " ") : "Your time";
-        const abs = Math.abs(offset);
-        const stamp = `${offset < 0 ? "-" : "+"}${String(Math.floor(abs / 60)).padStart(2, "0")}:${String(abs % 60).padStart(2, "0")}`;
-        you = document.createElement("li");
-        you.innerHTML = `<span></span><time></time><span class="day"></span>`;
-        you.children[0].textContent = city;
-        you.children[1].textContent = `${at.hour}:${at.minute}`;
-        you.children[1].dateTime = `${at.year}-${at.month}-${at.day}T${at.hour}:${at.minute}${stamp}`;
-        you.children[2].textContent = at.weekday;
-        if (at.weekday !== "Sun") you.children[2].classList.add("next-day");
-        clocks.insertBefore(you, rows.find((row) => offsetOf(row) > offset) || null);
-      }
-      const tag = document.createElement("span");
-      tag.className = "badge you-tag";
-      tag.textContent = "You";
-      you.firstElementChild.append(tag);
-      you.classList.add("you");
-    } catch {
-      // unknown time zone: the listed clocks stand on their own
-    }
-  }
 </script>
 
 <main class="wrap">
+<div class="curtain">
 
   <!-- Hero -->
   <section class="hero">
@@ -1380,6 +1446,7 @@
   <article class="stack-card" style="--i: 0">
     <div class="stack-dim" aria-hidden="true"></div>
     <div class="stack-text">
+      <p class="note">Matchday threads</p>
       <h2>Talk every match through, from team news to full&nbsp;time.</h2>
       <p class="lead">Each game gets its own matchday thread. Call the result before kick-off, suffer through the ninety together, then do the post-mortem.</p>
     </div>
@@ -1407,6 +1474,7 @@
   <article class="stack-card" style="--i: 1">
     <div class="stack-dim" aria-hidden="true"></div>
     <div class="stack-text">
+      <p class="note">As it happens</p>
       <h2>Celebrate every goal in capital&nbsp;letters.</h2>
       <p class="lead">Seconds after it hits the net, the whole thread loses its mind. Scenes.</p>
     </div>
@@ -1432,6 +1500,7 @@
   <article class="stack-card players" style="--i: 2">
     <div class="stack-dim" aria-hidden="true"></div>
     <div class="stack-text">
+      <p class="note">Player threads</p>
       <div class="rotate">
         <h2 class="slide is-active">Starboy in the form of his life? Talk about it in his&nbsp;thread.</h2>
         <h2 class="slide">Ode pulling the strings again? Talk about it in his&nbsp;thread.</h2>
@@ -1453,7 +1522,7 @@
             <span class="badge">England</span>
           </div>
           <h3>Bukayo Saka</h3>
-          <p class="sub">Bukayo Ayoyinka Temidayo Saka · 5 September 2001, Ealing</p>
+          <p class="sub">Bukayo Ayoyinka Temidayo Saka · 5&nbsp;September&nbsp;2001, Ealing</p>
         </div>
         <p class="bio">Hale End's finest. Cuts in on his left, terrorises full-backs and has carried the right wing for years.</p>
         <div class="facts">
@@ -1470,7 +1539,7 @@
             <span class="badge">Norway</span>
           </div>
           <h3>Martin Ødegaard</h3>
-          <p class="sub">Martin Ødegaard · 17 December 1998, Drammen</p>
+          <p class="sub">Martin Ødegaard · 17&nbsp;December&nbsp;1998, Drammen</p>
         </div>
         <p class="bio">Came on loan from Real Madrid in 2021 and signed for good that summer. Captain since 2022, and still sees passes nobody else does.</p>
         <div class="facts">
@@ -1487,7 +1556,7 @@
             <span class="badge">Netherlands</span>
           </div>
           <h3>Jurriën Timber</h3>
-          <p class="sub">Jurriën David Norman Timber · 17 June 2001, Utrecht</p>
+          <p class="sub">Jurriën David Norman Timber · 17&nbsp;June&nbsp;2001, Utrecht</p>
         </div>
         <p class="bio">Signed from Ajax in 2023 and lost nearly all of his first season to an ACL. Since then, a right-back who drifts inside like a sixth midfielder.</p>
         <div class="facts">
@@ -1506,7 +1575,7 @@
     <h2>Plus a few extras for the international&nbsp;break.</h2>
     <div class="extras-grid">
       <article class="extra">
-        <div class="extra-visual pitch-view" aria-hidden="true">
+        <div class="extra-visual pitch-view screen" aria-hidden="true">
           <div class="pitch-mini">
             <span class="ln ln-half"></span>
             <span class="ln ln-circle"></span>
@@ -1529,7 +1598,7 @@
         <p>Type eleven names and your post turns into a pitch, in the formation of your choice.</p>
       </article>
       <article class="extra">
-        <div class="extra-visual" aria-hidden="true">
+        <div class="extra-visual screen" aria-hidden="true">
           <div class="bet">
             <div class="bet-head">
               <small>Premier League</small>
@@ -1550,7 +1619,7 @@
         <p>Prove it in Bookie: back your calls with virtual coins and climb the league table. No real money involved.</p>
       </article>
       <article class="extra">
-        <div class="extra-visual" aria-hidden="true">
+        <div class="extra-visual screen" aria-hidden="true">
           <div class="games">
             <span><img src="assets/arcade/penalty.svg" alt="" width="320" height="180">Penalty</span>
             <span><img src="assets/arcade/keepie.svg" alt="" width="320" height="180">Keepie Uppie</span>
@@ -1569,6 +1638,7 @@
   <!-- Everywhere: most members never met, one kick-off on every clock -->
   <section class="everywhere">
     <div>
+      <p class="note">Who's on here</p>
       <h2>Most of us have never met. All of us lost sleep over the same&nbsp;game.</h2>
       <p class="lead">Mostly UK, with the rest spread from New&nbsp;York to Sydney. Some of us make it to the ground, plenty are the only Arsenal fan in the room. On here, the room is&nbsp;full.</p>
     </div>
@@ -1589,6 +1659,8 @@
     </figure>
   </section>
 
+</div><!-- /curtain -->
+
   <!-- Closing CTA -->
   <section class="closing">
     <div class="closing-photo" aria-hidden="true"></div>
@@ -1603,8 +1675,11 @@
       </div>
     </div>
     <footer class="footer-line">
-      <p>Online Arsenal, est. 2003. Not affiliated with Arsenal&nbsp;FC.</p>
-      <p>Photos by <span class="credit-crowd"><a href="https://unsplash.com/@james_open?utm_source=online_arsenal&amp;utm_medium=referral">James Kirkup</a> and </span><a href="https://unsplash.com/@whodunelson?utm_source=online_arsenal&amp;utm_medium=referral">Nelson Ndongala</a> on <a href="https://unsplash.com/?utm_source=online_arsenal&amp;utm_medium=referral">Unsplash</a></p>
+      <div class="footer-brand">
+        <img class="footer-logo" src="assets/oa-logo-small.svg" alt="" width="125" height="64">
+        <p>Online Arsenal, est. 2003. Not affiliated with Arsenal&nbsp;FC.</p>
+      </div>
+      <p>Photos by <span class="credit-crowd"><a href="https://unsplash.com/@james_open?utm_source=online_arsenal&amp;utm_medium=referral">James Kirkup</a><span class="credit-seats">,</span><span class="credit-and"> and</span> </span><span class="credit-seats"><a href="https://unsplash.com/@huyphan2602?utm_source=online_arsenal&amp;utm_medium=referral">Huy Phan</a> and </span><a href="https://unsplash.com/@whodunelson?utm_source=online_arsenal&amp;utm_medium=referral">Nelson Ndongala</a> on <a href="https://unsplash.com/?utm_source=online_arsenal&amp;utm_medium=referral">Unsplash</a></p>
     </footer>
   </section>
 
