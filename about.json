@@ -1,0 +1,28 @@
+{
+  "name": "OA Welcome",
+  "component": true,
+  "about_url": "https://github.com/arthurbaron/discourse-oa-welcome",
+  "authors": "Arthur Baron",
+  "theme_version": "1.0.0",
+  "minimum_discourse_version": "3.6.0",
+  "modifiers": {
+    "svg_icons": ["lock"]
+  },
+  "assets": {
+    "font_outfit": "assets/fonts/outfit-latin.woff2",
+    "font_caveat_brush": "assets/fonts/caveat-brush-latin.woff2",
+    "photo_crowd": "assets/images/crowd.jpg",
+    "photo_seats": "assets/images/seats.jpg",
+    "photo_emirates": "assets/images/emirates.jpg",
+    "hero_mockup": "assets/images/hero-mockup.webp",
+    "brush_down": "assets/images/brush-down.svg",
+    "brush_up": "assets/images/brush-up.svg",
+    "logo_small": "assets/images/oa-logo-small.svg",
+    "arcade_penalty": "assets/arcade/penalty.svg",
+    "arcade_keepie": "assets/arcade/keepie.svg",
+    "arcade_dribble": "assets/arcade/dribble.svg",
+    "arcade_2048": "assets/arcade/twentyfortyeight.svg",
+    "arcade_snake": "assets/arcade/snake.svg",
+    "arcade_breakout": "assets/arcade/breakout.svg"
+  }
+}

@@ -1,0 +1,1377 @@
+// OA Welcome: the page logged-out visitors see while the forum is
+// login-required. Ported from design/welcome-preview.html (the default
+// "brush" look). Every class carries the oaw- prefix so nothing here can
+// collide with Discourse's own .btn, .card, .badge or .wrap.
+
+@font-face {
+  font-family: "OAW Outfit";
+  src: url(#{$font_outfit}) format("woff2");
+  font-weight: 600 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OAW Caveat Brush";
+  src: url(#{$font_caveat_brush}) format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+$oaw-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0' intercept='0.55'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+$oaw-ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+// ---------- Page frame ----------
+
+html:has(body.oa-welcome-page) {
+  background: #2a070a;
+}
+
+body.oa-welcome-page {
+  background: $oaw-grain, #2a070a;
+  background-blend-mode: overlay, normal;
+  overflow-x: clip;
+
+  // the page brings its own gutters
+  #main-outlet-wrapper {
+    padding-inline: 0;
+  }
+
+  #main-outlet {
+    padding: 0;
+  }
+
+  // the closing band is the end of the page
+  .powered-by-discourse {
+    display: none;
+  }
+}
+
+.oa-welcome {
+  --oaw-ox-900: #2a070a;
+  --oaw-ox-850: #320a0f; // feature-stack cards
+  --oaw-ox-800: #380a0e;
+  --oaw-ox-750: #3f0c11;
+  --oaw-ox-1000: #0b0102; // darkens a covered stack card
+  --oaw-shadow-ink: #000;
+  --oaw-photo-veil: rgba(14, 3, 5, 0.74); // cream text stays 8.7:1 even over pure white
+  --oaw-club-red: #db0007;
+  --oaw-gold: #eaaa00;
+  --oaw-cream: #f6efe6;
+  --oaw-cream-muted: rgba(246, 239, 230, 0.68);
+  --oaw-cream-dim: rgba(246, 239, 230, 0.6);
+  --oaw-hair: rgba(246, 239, 230, 0.12);
+  --oaw-note: #fe4f4f; // arsenal.com's light red: 4.5:1 or better on every dark surface here
+
+  // the forum's own dark scheme, as in the phone mockup
+  --oaw-forum-bg: #131513;
+  --oaw-forum-surface: #1a1a1a;
+  --oaw-forum-text: #f5f5f5;
+  --oaw-forum-accent: #26b575;
+  --oaw-forum-accent-hi: #39fea5;
+  --oaw-forum-selected: #062d1b;
+  --oaw-forum-hair: rgba(245, 245, 245, 0.08);
+
+  --oaw-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --oaw-font-display: "OAW Outfit", var(--oaw-font-sans);
+  --oaw-font-note: "OAW Caveat Brush", "OAW Outfit", var(--oaw-font-sans);
+
+  color: var(--oaw-cream);
+  font-family: var(--oaw-font-sans);
+  -webkit-font-smoothing: antialiased;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+.oaw-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-inline: 24px;
+}
+
+// ---------- Shared type ----------
+
+.oa-welcome {
+  .oaw-h1,
+  .oaw-h2 {
+    font-family: var(--oaw-font-display);
+    color: var(--oaw-cream);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .oaw-h1 {
+    font-size: 56px;
+    line-height: 1.02;
+    margin-bottom: 18px;
+  }
+  .oaw-h2 {
+    font-size: 36px;
+    line-height: 1.08;
+    margin-bottom: 14px;
+  }
+}
+
+// a scribbled note above a section title: hand-lettered, slightly tilted,
+// bright red. Not an eyebrow: no caps, no tracking.
+.oaw-note {
+  display: inline-block;
+  margin: 0 0 12px;
+  font-family: var(--oaw-font-note);
+  font-size: 25px;
+  line-height: 1;
+  color: var(--oaw-note);
+  transform: rotate(-2deg);
+  transform-origin: left bottom;
+}
+
+.oaw-lead {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--oaw-cream-muted);
+  margin: 0;
+  max-width: 44ch;
+}
+
+.oaw-fine {
+  font-size: 13px;
+  margin: 14px 0 0;
+}
+
+// ---------- Buttons ----------
+
+.oaw-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.oaw-btn {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:active {
+    transform: scale(0.97);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--oaw-gold);
+    outline-offset: 3px;
+  }
+}
+
+.oaw-btn-join {
+  background: var(--oaw-gold);
+  color: var(--oaw-ox-900);
+  border: 1px solid var(--oaw-gold);
+
+  &:hover {
+    background: #f4b81a;
+    color: var(--oaw-ox-900);
+  }
+}
+
+.oaw-btn-login {
+  background: transparent;
+  color: var(--oaw-cream);
+  border: 1px solid var(--oaw-cream);
+
+  &:hover {
+    background: rgba(246, 239, 230, 0.06);
+    color: var(--oaw-cream);
+  }
+}
+
+// ---------- Hero ----------
+
+// The hero goes full-bleed and carries the dry-brush stroke in its own last
+// 180px, masked as one piece: the gaps cut through the photo and the phone
+// alike, so the phone runs on behind the streaks.
+.oaw-hero {
+  --oaw-shadow-ink: #3c0006;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 48px;
+  position: relative;
+  isolation: isolate;
+  margin-inline: calc(50% - 50vw);
+  padding: 64px calc(50vw - 50%) 156px;
+  margin-bottom: -60px;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - 179px) no-repeat,
+    url(#{$brush_down}) center bottom / 3200px 180px no-repeat;
+}
+
+// the crowd photo in its own colours under a flat dark veil
+.oaw-hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(var(--oaw-photo-veil), var(--oaw-photo-veil)),
+    url(#{$photo_crowd}) center 40% / cover no-repeat;
+  pointer-events: none;
+}
+
+.oaw-hero-text {
+  padding-bottom: 72px;
+  align-self: center;
+
+  // on the veiled photo, muted text would drop under 4.5:1: full cream
+  .oaw-lead,
+  .oaw-fine {
+    color: var(--oaw-cream);
+  }
+}
+
+// the phone runs on into the stroke; the shadow sits on the wrapper so it
+// follows the broken shape
+.oaw-hero-visual {
+  align-self: end;
+  height: 560px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  filter: drop-shadow(
+    0 24px 40px color-mix(in srgb, var(--oaw-shadow-ink) 35%, transparent)
+  );
+}
+
+.oaw-hero-mockup {
+  display: block;
+  flex: 0 0 auto;
+  width: 380px;
+  height: calc(100% + 170px);
+  object-fit: cover;
+  object-position: top;
+  align-self: flex-start;
+  animation: oaw-rise 600ms $oaw-ease-out both;
+}
+
+@keyframes oaw-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// ---------- Feature stack: each feature slides up over the previous ----------
+
+.oaw-stack {
+  display: grid;
+  gap: 32px;
+  padding-block: 72px 96px;
+}
+
+.oaw-stack-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 48px;
+  align-items: center;
+  padding: 44px;
+  border-radius: 24px;
+  border: 1px solid var(--oaw-hair);
+  background: var(--oaw-ox-850);
+  box-shadow: 0 -28px 60px -30px
+    color-mix(in srgb, var(--oaw-shadow-ink) 75%, transparent);
+  transform-origin: 50% 0%;
+}
+
+.oaw-stack-text .oaw-lead {
+  max-width: 38ch;
+}
+
+// darkens a card as the next one slides over it (opacity set from JS)
+.oaw-stack-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: var(--oaw-ox-1000);
+  opacity: 0;
+  pointer-events: none;
+}
+
+// Sticky stacking only where a whole card fits under the forum header;
+// elsewhere the cards simply follow each other. Keep in sync with
+// STACKING_QUERY in lib/oa-welcome-motion.js.
+@media (min-width: 961px) and (min-height: 860px) {
+  .oaw-stack-card {
+    position: sticky;
+    top: calc(var(--header-offset, 0px) + 28px + var(--i) * 14px);
+    height: calc(100vh - var(--header-offset, 0px) - 120px);
+    max-height: 720px;
+  }
+}
+
+// ---------- Cards (same system as the real components) ----------
+
+.oaw-card {
+  background: var(--oaw-ox-800);
+  border: 1px solid var(--oaw-hair);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0;
+  box-shadow: 0 24px 48px -24px
+    color-mix(in srgb, var(--oaw-shadow-ink) 70%, transparent);
+
+  h3 {
+    font-family: var(--oaw-font-display);
+    color: var(--oaw-cream);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    margin: 4px 0;
+  }
+}
+
+.oaw-sub {
+  font-size: 12.5px;
+  color: var(--oaw-cream-dim);
+  margin: 0;
+}
+
+.oaw-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.oaw-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(246, 239, 230, 0.06);
+  color: var(--oaw-cream-muted);
+  border: 1px solid var(--oaw-hair);
+
+  &--accent {
+    background: color-mix(in oklab, var(--oaw-club-red) 22%, var(--oaw-ox-800));
+    color: color-mix(in oklab, var(--oaw-club-red) 35%, var(--oaw-cream));
+    border-color: color-mix(in oklab, var(--oaw-club-red) 35%, transparent);
+  }
+}
+
+.oaw-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 690 / 388;
+  object-fit: cover;
+  object-position: 50% 58%;
+  margin-top: 16px;
+  border-radius: 8px;
+  background: var(--oaw-ox-750);
+}
+
+// ---------- Match poll ----------
+
+// The real result from the derby thread (26 voters, closed 23 Nov): JS walks
+// pick, press, reveal once the card is on screen.
+.oaw-poll {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--oaw-hair);
+  display: grid;
+  gap: 8px;
+}
+
+.oaw-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  padding: 9px 12px 15px;
+  border-radius: 8px;
+  background: rgba(246, 239, 230, 0.04);
+  border: 1px solid var(--oaw-hair);
+
+  i {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--oaw-cream-dim);
+    flex: 0 0 auto;
+    transition:
+      border-width 150ms ease,
+      border-color 150ms ease,
+      opacity 200ms ease;
+  }
+
+  b {
+    margin-left: auto;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    opacity: 0;
+  }
+
+  // result bar, as the real poll draws it: green for the winner, grey after
+  s {
+    position: absolute;
+    left: 36px;
+    right: 12px;
+    bottom: 6px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(246, 239, 230, 0.45);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  &:first-child s {
+    background: #5aad7b;
+  }
+}
+
+.oaw-poll.is-picked .oaw-option:first-child i {
+  border-width: 4.5px;
+  border-color: var(--oaw-cream);
+}
+.oaw-poll.is-pressed .oaw-vote-btn {
+  transform: scale(0.97);
+}
+.oaw-poll.is-voted {
+  .oaw-option:not(:first-child) i {
+    opacity: 0.35;
+  }
+  .oaw-option b {
+    opacity: 1;
+    transition: opacity 300ms ease 200ms;
+  }
+  .oaw-option s {
+    transform: scaleX(var(--p));
+    transition: transform 700ms $oaw-ease-out calc(var(--n) * 80ms);
+  }
+  .oaw-vote-btn {
+    opacity: 0;
+  }
+  .oaw-poll-total {
+    opacity: 1;
+    transition-delay: 120ms;
+  }
+}
+
+.oaw-poll-foot {
+  display: grid;
+  margin-top: 6px;
+
+  > * {
+    grid-area: 1 / 1;
+    align-self: center;
+  }
+}
+
+.oaw-poll-total {
+  font-size: 12.5px;
+  color: var(--oaw-cream-dim);
+  opacity: 0;
+  transition: opacity 200ms ease;
+
+  .d-icon {
+    margin-right: 4px;
+    font-size: 11px;
+  }
+}
+
+.oaw-vote-btn {
+  justify-self: start;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(246, 239, 230, 0.32);
+  transition:
+    transform 120ms ease,
+    opacity 200ms ease;
+}
+
+// ---------- Player card ----------
+
+.oaw-player {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 20px;
+}
+
+.oaw-shirt {
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding: 12px 8px;
+  color: #fff;
+  background:
+    radial-gradient(ellipse 110% 80% at 50% 8%, rgba(255, 255, 255, 0.05), transparent 62%),
+    radial-gradient(ellipse 130% 60% at 50% 100%, rgba(0, 0, 0, 0.24), transparent 55%),
+    $oaw-grain,
+    var(--oaw-club-red);
+  background-blend-mode: normal, normal, overlay, normal;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  small {
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  strong {
+    align-self: center;
+    text-align: center;
+    font-family: var(--oaw-font-display);
+    font-size: 80px;
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+  }
+}
+
+.oaw-bio {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--oaw-cream);
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--oaw-hair);
+}
+
+.oaw-facts {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--oaw-hair);
+  border: 1px solid var(--oaw-hair);
+  border-radius: 8px;
+  overflow: hidden;
+
+  div {
+    background: var(--oaw-ox-750);
+    padding: 9px 11px 10px;
+    font-size: 12.5px;
+
+    &::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--oaw-cream-dim);
+      margin-bottom: 3px;
+    }
+  }
+}
+
+// Saka, Ødegaard and Timber take turns in the same spot. Every slide sits in
+// one grid cell, so the tallest sets the height and nothing jumps.
+.oaw-rotate {
+  display: grid;
+
+  > .oaw-slide {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition:
+      opacity 360ms $oaw-ease-out,
+      transform 360ms $oaw-ease-out,
+      visibility 0s linear 360ms;
+
+    &.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition-delay: 0s;
+    }
+  }
+}
+
+.oaw-stack-text .oaw-rotate > .oaw-slide {
+  align-self: end;
+}
+
+.oaw-player-tabs {
+  display: flex;
+  gap: 22px;
+  margin-top: 28px;
+
+  button {
+    position: relative;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--oaw-cream-dim);
+    background: none;
+    border: 0;
+    min-height: 44px;
+    padding: 6px 0 10px;
+    cursor: pointer;
+    transition: color 140ms ease;
+
+    &:focus-visible {
+      outline: 2px solid var(--oaw-gold);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+
+    &.is-active {
+      color: var(--oaw-cream);
+    }
+  }
+
+  // the line under each name; on the active one it fills while autoplay runs
+  i {
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--oaw-hair);
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--oaw-cream);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+  }
+
+  .is-active i::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .oaw-player-tabs button:hover {
+    color: var(--oaw-cream);
+  }
+}
+
+.oaw-players.is-autoplay .oaw-player-tabs .is-active i::after {
+  animation: oaw-tab-fill 6s linear both;
+}
+.oaw-players.is-autoplay.is-paused .oaw-player-tabs .is-active i::after {
+  animation-play-state: paused;
+}
+
+@keyframes oaw-tab-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+// ---------- Live match thread, in the forum's own dark scheme ----------
+
+.oaw-live {
+  margin: 0;
+
+  figcaption {
+    font-size: 12.5px;
+    color: var(--oaw-cream-dim);
+    margin-top: 10px;
+  }
+}
+
+.oaw-thread {
+  background: var(--oaw-forum-bg);
+  border: 1px solid var(--oaw-hair);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px -24px
+    color-mix(in srgb, var(--oaw-shadow-ink) 70%, transparent);
+}
+
+.oaw-thread-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 14px 18px;
+  background: var(--oaw-forum-surface);
+}
+
+.oaw-thread-score {
+  font-family: var(--oaw-font-display);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.oaw-thread-scorers {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.oaw-posts {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+.oaw-post-row {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--oaw-forum-hair);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--oaw-forum-text);
+    overflow-wrap: anywhere;
+  }
+}
+
+.oaw-letter {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+// reveal one by one once the card scrolls into view (JS adds .is-armed)
+.oaw-live.is-armed .oaw-post-row {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.oaw-live.is-armed.is-in .oaw-post-row {
+  animation: oaw-post-in 360ms $oaw-ease-out both;
+  animation-delay: calc(var(--i) * 420ms);
+}
+
+@keyframes oaw-post-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// ---------- Extras: three smaller items below the stack ----------
+
+.oaw-extras {
+  padding-block: 8px 96px;
+
+  .oaw-h2 {
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+}
+
+.oaw-extras-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.oaw-extra {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 18px 18px 22px;
+  border: 1px solid var(--oaw-hair);
+  border-radius: 16px;
+
+  h3 {
+    font-family: var(--oaw-font-display);
+    color: var(--oaw-cream);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 4px 0 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--oaw-cream-muted);
+  }
+}
+
+// All three extras sit on the forum's own dark scheme, like the phone up
+// top, so they read as real screens rather than glassy tiles.
+.oaw-extra-visual {
+  position: relative;
+  height: 200px;
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--oaw-forum-bg);
+  color: var(--oaw-forum-text);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+// the line-up, tilted back like a broadcast graphic
+.oaw-pitch-view {
+  padding: 0;
+  perspective: 430px;
+  perspective-origin: 50% 0%;
+}
+
+// mini pitch: dots only, mirrors the formation plugin
+.oaw-pitch {
+  position: relative;
+  width: min(92%, 276px); // wider boxes would push the far goal off the top
+  aspect-ratio: 68 / 100;
+  border-radius: 4px;
+  overflow: hidden;
+  background: repeating-linear-gradient(180deg, #4a8a3c 0 9.09%, #3f7a33 9.09% 18.18%);
+  transform: rotateX(56deg) translateY(-32%);
+  transform-origin: 50% 100%;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 4%;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+  }
+
+  .oaw-ln {
+    position: absolute;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+  }
+  .oaw-ln-half {
+    left: 4%;
+    right: 4%;
+    top: 50%;
+    height: 0;
+    border-width: 1.5px 0 0;
+  }
+  .oaw-ln-circle {
+    left: 50%;
+    top: 50%;
+    width: 28%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .oaw-ln-box {
+    left: 22%;
+    right: 22%;
+    height: 15%;
+  }
+  .oaw-ln-top {
+    top: 4%;
+    border-top: 0;
+  }
+  .oaw-ln-bottom {
+    bottom: 4%;
+    border-bottom: 0;
+  }
+
+  .oaw-dot {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #d63a2f;
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85);
+    transform: translate(-50%, -50%);
+  }
+}
+
+// Bookie: a match card as the plugin shows it, mid-pick. The real buttons
+// also carry odds; those are left out rather than made up.
+.oaw-bet {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.oaw-bet-head {
+  display: grid;
+  gap: 2px;
+
+  small {
+    font-size: 11px;
+    color: rgba(245, 245, 245, 0.6);
+  }
+
+  strong {
+    font-family: var(--oaw-font-display);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+.oaw-picks {
+  display: flex;
+  gap: 6px;
+
+  span {
+    flex: 1 1 auto;
+    font-weight: 600;
+    text-align: center;
+    background: var(--oaw-forum-surface);
+  }
+
+  .is-picked {
+    background: var(--oaw-forum-selected);
+    border-color: var(--oaw-forum-accent);
+    color: var(--oaw-forum-accent-hi);
+  }
+}
+
+.oaw-picks span,
+.oaw-stake span,
+.oaw-stake b {
+  font-size: 12.5px;
+  padding: 9px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 245, 245, 0.12);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oaw-picks .is-picked {
+  border-color: var(--oaw-forum-accent);
+}
+
+.oaw-stake {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+
+  span {
+    color: rgba(245, 245, 245, 0.6);
+    background: var(--oaw-forum-surface);
+  }
+
+  b {
+    font-weight: 700;
+    padding-inline: 14px;
+    background: var(--oaw-forum-accent);
+    border-color: var(--oaw-forum-accent);
+    color: var(--oaw-forum-bg);
+  }
+}
+
+// Arcade: the lobby's own game thumbnails, as the lobby shows them
+.oaw-games {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 8px;
+
+  span {
+    display: grid;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: rgba(245, 245, 245, 0.72);
+    white-space: nowrap;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    border-radius: 6px;
+    border: 1px solid rgba(245, 245, 245, 0.1);
+    background: var(--oaw-forum-surface);
+  }
+}
+
+// ---------- Who's on here: one kick-off on every clock ----------
+
+.oaw-everywhere {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: center;
+  padding-block: 96px 128px;
+  border-top: 1px solid var(--oaw-hair);
+
+  .oaw-h2 {
+    font-size: 40px;
+  }
+  .oaw-lead {
+    max-width: 40ch;
+  }
+}
+
+.oaw-clocks {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--oaw-hair);
+
+  li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 2.4em;
+    align-items: baseline;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--oaw-hair);
+    font-size: 14px;
+    color: var(--oaw-cream-muted);
+
+    &:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    // city names stay on one line; a long one fades out on the right
+    > span:first-child {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    }
+  }
+
+  time {
+    font-family: var(--oaw-font-display);
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    color: var(--oaw-cream);
+  }
+
+  .oaw-day {
+    font-size: 12.5px;
+    color: var(--oaw-cream-dim);
+    text-align: right;
+  }
+  .oaw-home {
+    color: var(--oaw-cream);
+    font-weight: 600;
+  }
+  .oaw-next-day {
+    color: var(--oaw-cream);
+  }
+}
+
+// ---------- Closing CTA ----------
+
+// "Pull up a seat." over literal seats: empty Emirates rows by Huy Phan
+// (Unsplash). Without the curtain it carries the stroke, flipped, in its own
+// top 180px.
+.oaw-closing {
+  position: relative;
+  isolation: isolate;
+  margin-inline: calc(50% - 50vw);
+  padding: 228px calc(50vw - 50%) 0;
+  margin-top: -48px;
+  mask:
+    url(#{$brush_up}) center top / 3200px 180px no-repeat,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - 179px) no-repeat;
+
+  .oaw-h2 {
+    font-size: 56px;
+    line-height: 1.02;
+    margin-bottom: 16px;
+  }
+  .oaw-lead {
+    color: var(--oaw-cream);
+  }
+  .oaw-actions {
+    margin-top: 0;
+    padding-bottom: 6px;
+  }
+}
+
+.oaw-closing-photo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(var(--oaw-photo-veil), var(--oaw-photo-veil)),
+    url(#{$photo_seats}) center 62% / cover no-repeat;
+  pointer-events: none;
+}
+
+.oaw-closing-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 32px 56px;
+}
+
+.oaw-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 112px;
+  padding-block: 40px 32px;
+  font-size: 12px;
+  color: var(--oaw-cream);
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(246, 239, 230, 0.3);
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--oaw-cream);
+    }
+  }
+}
+
+// sign-off: the small OA mark beside the line that names it
+.oaw-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.oaw-footer-logo {
+  display: block;
+  width: auto;
+  height: 28px;
+  flex: 0 0 auto;
+}
+
+// Curtain reveal: the closing band waits pinned to the bottom of the screen,
+// behind the page, and the page lifts off it like a curtain with the
+// dry-brush stroke along its hem. JS adds .is-curtain only when the band
+// fits the screen and motion is welcome.
+.oa-welcome.is-curtain {
+  .oaw-curtain {
+    position: relative;
+    z-index: 1;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: calc(50vw - 50%);
+    background: $oaw-grain, var(--oaw-ox-900);
+    background-blend-mode: overlay, normal;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% - 24px); // overlap: the stroke's top row has pinholes
+      height: 180px;
+      background: $oaw-grain, var(--oaw-ox-900);
+      background-blend-mode: overlay, normal;
+      mask: url(#{$brush_down}) center top / 3200px 180px no-repeat;
+      pointer-events: none;
+    }
+  }
+
+  .oaw-closing {
+    position: sticky;
+    bottom: 0;
+    z-index: 0;
+    margin-top: 0;
+    mask: none;
+  }
+}
+
+// ---------- Tablet and below: stack ----------
+
+@media (max-width: 960px) {
+  .oaw-hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-top: 48px;
+  }
+  .oaw-hero-text {
+    padding-bottom: 0;
+  }
+  .oaw-hero-visual {
+    height: 460px;
+  }
+
+  .oaw-stack-card {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 36px 32px;
+
+    > :not(.oaw-stack-text):not(.oaw-stack-dim) {
+      width: 100%;
+      max-width: 560px;
+    }
+  }
+  .oaw-extras-grid {
+    grid-template-columns: 1fr;
+    max-width: 560px;
+  }
+  .oaw-closing-inner {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 28px;
+  }
+  .oaw-everywhere {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .oaw-kickoff {
+    max-width: 560px;
+  }
+}
+
+// ---------- Phones: smaller type, full-width buttons, tighter cards ----------
+
+@media (max-width: 600px) {
+  .oa-welcome {
+    .oaw-h1 {
+      font-size: 38px;
+    }
+    .oaw-h2 {
+      font-size: 28px;
+    }
+  }
+  .oaw-lead {
+    font-size: 16px;
+  }
+
+  .oaw-hero {
+    padding-top: 40px;
+    margin-bottom: -36px;
+  }
+  .oaw-hero-visual {
+    height: 420px;
+  }
+  .oaw-hero-mockup {
+    width: 320px;
+  }
+  .oaw-actions .oaw-btn {
+    flex: 1 1 auto;
+  }
+
+  .oaw-stack {
+    gap: 20px;
+    padding-block: 48px 72px;
+  }
+  .oaw-stack-card {
+    padding: 28px 20px;
+    border-radius: 20px;
+  }
+  .oaw-extras {
+    padding-bottom: 72px;
+
+    .oaw-h2 {
+      font-size: 24px;
+    }
+  }
+
+  .oaw-player {
+    grid-template-columns: 96px 1fr;
+    gap: 14px;
+  }
+  .oaw-shirt strong {
+    font-size: 54px;
+  }
+  .oaw-card h3 {
+    font-size: 22px;
+  }
+
+  .oaw-everywhere {
+    padding-block: 72px 88px;
+
+    .oaw-h2 {
+      font-size: 30px;
+    }
+  }
+  .oaw-clocks time {
+    font-size: 23px;
+  }
+
+  .oaw-closing .oaw-h2 {
+    font-size: 38px;
+  }
+  // narrow crop: zoom in on the seats so the banners above drop out
+  .oaw-closing-photo {
+    background-size: auto, auto 150%;
+    background-position: 0 0, 35% 100%;
+  }
+  .oaw-footer {
+    margin-top: 80px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oaw-hero-mockup {
+    animation: none;
+  }
+  .oaw-rotate > .oaw-slide {
+    transform: none;
+  }
+  .oaw-option s {
+    opacity: 0;
+  }
+  .oaw-poll.is-voted .oaw-option s {
+    opacity: 1;
+    transition: opacity 300ms ease;
+  }
+  .oaw-btn {
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease;
+
+    &:active {
+      transform: none;
+    }
+  }
+}
