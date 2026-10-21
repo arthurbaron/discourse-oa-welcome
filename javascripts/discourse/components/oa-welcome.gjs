@@ -197,7 +197,8 @@ export default class OaWelcome extends Component {
           </section>
 
           <section class="oaw-extras">
-            <h2 class="oaw-h2">Plus a few extras for the international&nbsp;break.</h2>
+            <p class="oaw-note">Extras</p>
+            <h2 class="oaw-h2">Something to get you through the international&nbsp;break.</h2>
             <div class="oaw-extras-grid">
               <article class="oaw-extra">
                 <div class="oaw-extra-visual oaw-pitch-view" aria-hidden="true">

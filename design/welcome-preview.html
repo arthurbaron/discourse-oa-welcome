@@ -1191,6 +1191,17 @@
   :root[data-cards="grey"] .clocks .next-day { color: var(--forum-text); }
   :root[data-cards="grey"] .clocks .day { color: rgba(245, 245, 245, 0.6); }
 
+  /* Variant (?swap=1): the two dark tones swapped. The page and the
+     scrolling feature blocks take the forum grey; the cards, screens and
+     live thread inside them take the oxblood. */
+  :root[data-swap] {
+    --ox-900: #131513;
+    --ox-850: #1a1a1a;        /* the scrolling feature blocks: grey, a step up from the page */
+    --ox-1000: #000;          /* dims a covered block */
+    --forum-bg: #2a070a;      /* a step under the feature cards, as the grey was */
+    --forum-surface: #380a0e;
+  }
+
   /* ---------- Mobile ---------- */
 
   /* Tablet and below: stack. Two columns get too tight under ~960px. */
@@ -1258,6 +1269,7 @@
   // ?phone=html (the HTML recreation instead of Arthur's mockup),
   // ?red=arsenal (reds retuned to arsenal.com's own web red),
   // ?cards=red (the earlier oxblood cards instead of the grey default),
+  // ?swap=1 (grey page with oxblood cards, the two tones swapped),
   // ?look=classic (the earlier tinted hero instead of the default
   // dry-brush look), &fill=red (solid red instead of the photo)
   const params = new URLSearchParams(location.search);
@@ -1268,6 +1280,7 @@
   if (params.get("fill")) document.documentElement.dataset.fill = params.get("fill");
   if (params.get("seats")) document.documentElement.dataset.seats = params.get("seats");
   if (params.get("cards")) document.documentElement.dataset.cards = params.get("cards");
+  if (params.get("swap")) document.documentElement.dataset.swap = "on";
 
   // Posts are visible by default; only when motion is welcome do we hide them
   // and let them arrive one by one as the section comes into view.
@@ -1608,7 +1621,8 @@
 
   <!-- Extras: smaller, three across -->
   <section class="extras">
-    <h2>Plus a few extras for the international&nbsp;break.</h2>
+    <p class="note">Extras</p>
+    <h2>Something to get you through the international&nbsp;break.</h2>
     <div class="extras-grid">
       <article class="extra">
         <div class="extra-visual pitch-view screen" aria-hidden="true">
