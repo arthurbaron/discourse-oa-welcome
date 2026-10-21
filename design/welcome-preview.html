@@ -1,4 +1,4 @@
-<html lang="en" data-look="brush">
+<html lang="en" data-look="brush" data-cards="grey">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OA welcome page</title>
@@ -811,11 +811,12 @@
   }
 
   /* the line-up, tilted back like a broadcast graphic and bleeding off the edges */
-  .extra-visual.pitch-view { padding: 0; perspective: 430px; perspective-origin: 50% 0%; }
+  .extra-visual.pitch-view { padding: 0; }
   .pitch-view .pitch-mini {
     height: auto;
     width: min(92%, 276px); /* wider boxes would push the far goal off the top */
-    transform: rotateX(56deg) translateY(-32%);
+    /* perspective in the pitch's own transform: Safari drops it on the clipped parent */
+    transform: translateY(-29.6%) scale(0.8) perspective(463px) rotateX(34deg);
     transform-origin: 50% 100%;
   }
   .pitch-view .dot { width: 12px; height: 12px; }
@@ -979,7 +980,6 @@
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
     mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
   }
-  .clocks .home { color: var(--cream); font-weight: 600; }
   .clocks .next-day { color: var(--cream); }
 
   /* ---------- Closing CTA ---------- */
@@ -1157,6 +1157,40 @@
   :root[data-look="brush"] .footer-line { color: var(--cream); }
   :root[data-look="brush"] .btn-login { border-color: var(--cream); }
 
+  /* Cards are forum elements, so they use the forum's grey scheme (the
+     default; ?cards=red shows the earlier oxblood cards). */
+  :root[data-cards="grey"] .card {
+    background: var(--forum-bg);
+    border-color: rgba(245, 245, 245, 0.1);
+    color: var(--forum-text);
+  }
+  :root[data-cards="grey"] .card .badge {
+    background: var(--forum-surface);
+    border-color: rgba(245, 245, 245, 0.12);
+    color: rgba(245, 245, 245, 0.72);
+  }
+  :root[data-cards="grey"] .card .badge.accent {
+    background: color-mix(in oklab, var(--club-red) 22%, var(--forum-bg));
+    color: color-mix(in oklab, var(--club-red) 35%, var(--forum-text));
+    border-color: color-mix(in oklab, var(--club-red) 35%, transparent);
+  }
+  :root[data-cards="grey"] .card .sub { color: rgba(245, 245, 245, 0.6); }
+  :root[data-cards="grey"] .stack-card .poll { border-top-color: rgba(245, 245, 245, 0.1); }
+  :root[data-cards="grey"] .stack-card .option {
+    background: var(--forum-surface);
+    border-color: rgba(245, 245, 245, 0.12);
+  }
+  :root[data-cards="grey"] .stack-card .bio { border-top-color: rgba(245, 245, 245, 0.1); color: var(--forum-text); }
+  :root[data-cards="grey"] .stack-card .facts { background: rgba(245, 245, 245, 0.1); border-color: rgba(245, 245, 245, 0.1); }
+  :root[data-cards="grey"] .stack-card .facts div { background: var(--forum-surface); }
+  :root[data-cards="grey"] .stack-card .facts div::before { color: rgba(245, 245, 245, 0.6); }
+  :root[data-cards="grey"] .clocks,
+  :root[data-cards="grey"] .clocks li { border-color: rgba(245, 245, 245, 0.1); }
+  :root[data-cards="grey"] .clocks li { color: rgba(245, 245, 245, 0.7); }
+  :root[data-cards="grey"] .clocks time,
+  :root[data-cards="grey"] .clocks .next-day { color: var(--forum-text); }
+  :root[data-cards="grey"] .clocks .day { color: rgba(245, 245, 245, 0.6); }
+
   /* ---------- Mobile ---------- */
 
   /* Tablet and below: stack. Two columns get too tight under ~960px. */
@@ -1223,6 +1257,7 @@
   // Preview-only switches: ?hero=bw (photo in black and white),
   // ?phone=html (the HTML recreation instead of Arthur's mockup),
   // ?red=arsenal (reds retuned to arsenal.com's own web red),
+  // ?cards=red (the earlier oxblood cards instead of the grey default),
   // ?look=classic (the earlier tinted hero instead of the default
   // dry-brush look), &fill=red (solid red instead of the photo)
   const params = new URLSearchParams(location.search);
@@ -1232,6 +1267,7 @@
   if (params.get("look")) document.documentElement.dataset.look = params.get("look");
   if (params.get("fill")) document.documentElement.dataset.fill = params.get("fill");
   if (params.get("seats")) document.documentElement.dataset.seats = params.get("seats");
+  if (params.get("cards")) document.documentElement.dataset.cards = params.get("cards");
 
   // Posts are visible by default; only when motion is welcome do we hide them
   // and let them arrive one by one as the section comes into view.
@@ -1651,7 +1687,7 @@
       <p class="sub">Kick-off, 23 November 2025</p>
       <ol class="clocks">
         <li><span>New York</span><time datetime="2025-11-23T11:30-05:00">11:30</time><span class="day">Sun</span></li>
-        <li class="home"><span>London</span><time datetime="2025-11-23T16:30+00:00">16:30</time><span class="day">Sun</span></li>
+        <li><span>London</span><time datetime="2025-11-23T16:30+00:00">16:30</time><span class="day">Sun</span></li>
         <li><span>Amsterdam, Berlin, Stockholm</span><time datetime="2025-11-23T17:30+01:00">17:30</time><span class="day">Sun</span></li>
         <li><span>Mumbai</span><time datetime="2025-11-23T22:00+05:30">22:00</time><span class="day">Sun</span></li>
         <li><span>Sydney</span><time datetime="2025-11-24T03:30+11:00">03:30</time><span class="day next-day">Mon</span></li>
@@ -1667,7 +1703,7 @@
     <div class="closing-inner">
       <div>
         <h2>Pull up a seat.</h2>
-        <p class="lead">No waiting list, unlike the Emirates. No ads either: members chip in for the hosting, so it stays that way. Join for free, or log in to pick up where you left&nbsp;off.</p>
+        <p class="lead">No waiting list, unlike the Emirates. No ads, ever. Join for free, or log in to pick up where you left&nbsp;off.</p>
       </div>
       <div class="actions">
         <button type="button" class="btn btn-join">Join the forum</button>

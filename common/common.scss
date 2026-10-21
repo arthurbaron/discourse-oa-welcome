@@ -325,11 +325,13 @@ body.oa-welcome-page {
   }
 }
 
-// ---------- Cards (same system as the real components) ----------
+// ---------- Cards: forum elements, so the forum's own grey scheme ----------
 
 .oaw-card {
-  background: var(--oaw-ox-800);
-  border: 1px solid var(--oaw-hair);
+  --oaw-card-hair: rgba(245, 245, 245, 0.1);
+  background: var(--oaw-forum-bg);
+  color: var(--oaw-forum-text);
+  border: 1px solid var(--oaw-card-hair);
   border-radius: 12px;
   padding: 20px;
   margin: 0;
@@ -338,7 +340,7 @@ body.oa-welcome-page {
 
   h3 {
     font-family: var(--oaw-font-display);
-    color: var(--oaw-cream);
+    color: var(--oaw-forum-text);
     font-size: 26px;
     font-weight: 700;
     letter-spacing: -0.015em;
@@ -349,7 +351,7 @@ body.oa-welcome-page {
 
 .oaw-sub {
   font-size: 12.5px;
-  color: var(--oaw-cream-dim);
+  color: rgba(245, 245, 245, 0.6);
   margin: 0;
 }
 
@@ -366,13 +368,13 @@ body.oa-welcome-page {
   line-height: 1.5;
   padding: 2px 9px;
   border-radius: 999px;
-  background: rgba(246, 239, 230, 0.06);
-  color: var(--oaw-cream-muted);
-  border: 1px solid var(--oaw-hair);
+  background: var(--oaw-forum-surface);
+  color: rgba(245, 245, 245, 0.72);
+  border: 1px solid rgba(245, 245, 245, 0.12);
 
   &--accent {
-    background: color-mix(in oklab, var(--oaw-club-red) 22%, var(--oaw-ox-800));
-    color: color-mix(in oklab, var(--oaw-club-red) 35%, var(--oaw-cream));
+    background: color-mix(in oklab, var(--oaw-club-red) 22%, var(--oaw-forum-bg));
+    color: color-mix(in oklab, var(--oaw-club-red) 35%, var(--oaw-forum-text));
     border-color: color-mix(in oklab, var(--oaw-club-red) 35%, transparent);
   }
 }
@@ -386,7 +388,7 @@ body.oa-welcome-page {
   object-position: 50% 58%;
   margin-top: 16px;
   border-radius: 8px;
-  background: var(--oaw-ox-750);
+  background: var(--oaw-forum-surface);
 }
 
 // ---------- Match poll ----------
@@ -396,7 +398,7 @@ body.oa-welcome-page {
 .oaw-poll {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--oaw-hair);
+  border-top: 1px solid rgba(245, 245, 245, 0.1);
   display: grid;
   gap: 8px;
 }
@@ -409,8 +411,8 @@ body.oa-welcome-page {
   font-size: 13.5px;
   padding: 9px 12px 15px;
   border-radius: 8px;
-  background: rgba(246, 239, 230, 0.04);
-  border: 1px solid var(--oaw-hair);
+  background: var(--oaw-forum-surface);
+  border: 1px solid rgba(245, 245, 245, 0.12);
 
   i {
     width: 14px;
@@ -558,10 +560,10 @@ body.oa-welcome-page {
   grid-column: 1 / -1;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--oaw-cream);
+  color: var(--oaw-forum-text);
   margin: 0;
   padding-top: 16px;
-  border-top: 1px solid var(--oaw-hair);
+  border-top: 1px solid rgba(245, 245, 245, 0.1);
 }
 
 .oaw-facts {
@@ -569,13 +571,13 @@ body.oa-welcome-page {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: var(--oaw-hair);
-  border: 1px solid var(--oaw-hair);
+  background: rgba(245, 245, 245, 0.1);
+  border: 1px solid rgba(245, 245, 245, 0.1);
   border-radius: 8px;
   overflow: hidden;
 
   div {
-    background: var(--oaw-ox-750);
+    background: var(--oaw-forum-surface);
     padding: 9px 11px 10px;
     font-size: 12.5px;
 
@@ -586,7 +588,7 @@ body.oa-welcome-page {
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--oaw-cream-dim);
+      color: rgba(245, 245, 245, 0.6);
       margin-bottom: 3px;
     }
   }
@@ -858,8 +860,6 @@ body.oa-welcome-page {
 // the line-up, tilted back like a broadcast graphic
 .oaw-pitch-view {
   padding: 0;
-  perspective: 430px;
-  perspective-origin: 50% 0%;
 }
 
 // mini pitch: dots only, mirrors the formation plugin
@@ -870,7 +870,9 @@ body.oa-welcome-page {
   border-radius: 4px;
   overflow: hidden;
   background: repeating-linear-gradient(180deg, #4a8a3c 0 9.09%, #3f7a33 9.09% 18.18%);
-  transform: rotateX(56deg) translateY(-32%);
+  // perspective lives in the pitch's own transform: Safari drops a
+  // perspective set on the clipped parent and draws the pitch flat
+  transform: translateY(-29.6%) scale(0.8) perspective(463px) rotateX(34deg);
   transform-origin: 50% 100%;
 
   &::before {
@@ -1055,7 +1057,7 @@ body.oa-welcome-page {
   list-style: none;
   margin: 16px 0 0;
   padding: 0;
-  border-top: 1px solid var(--oaw-hair);
+  border-top: 1px solid rgba(245, 245, 245, 0.1);
 
   li {
     display: grid;
@@ -1063,9 +1065,9 @@ body.oa-welcome-page {
     align-items: baseline;
     gap: 14px;
     padding: 12px 0;
-    border-bottom: 1px solid var(--oaw-hair);
+    border-bottom: 1px solid rgba(245, 245, 245, 0.1);
     font-size: 14px;
-    color: var(--oaw-cream-muted);
+    color: rgba(245, 245, 245, 0.7);
 
     &:last-child {
       border-bottom: 0;
@@ -1088,20 +1090,56 @@ body.oa-welcome-page {
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
     line-height: 1;
-    color: var(--oaw-cream);
+    color: var(--oaw-forum-text);
   }
 
   .oaw-day {
     font-size: 12.5px;
-    color: var(--oaw-cream-dim);
+    color: rgba(245, 245, 245, 0.6);
     text-align: right;
   }
-  .oaw-home {
-    color: var(--oaw-cream);
-    font-weight: 600;
+
+  // split-flap tiles: one dark tile per digit, a hairline where the flap
+  // folds; the digit comes from data-d so JS can flip it without touching
+  // the text Glimmer rendered
+  time {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    perspective: 300px;
+  }
+
+  .oaw-flap {
+    position: relative;
+    display: inline-block;
+    min-width: 0.7em;
+    padding: 0.08em 0.04em;
+    border-radius: 4px;
+    background: var(--oaw-forum-surface);
+    box-shadow: inset 0 0 0 1px rgba(245, 245, 245, 0.06);
+    text-align: center;
+    transform-origin: 50% 50%;
+
+    &::before {
+      content: attr(data-d);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  .oaw-flap-colon {
+    padding-inline: 1px;
   }
   .oaw-next-day {
-    color: var(--oaw-cream);
+    color: var(--oaw-forum-text);
   }
 }
 

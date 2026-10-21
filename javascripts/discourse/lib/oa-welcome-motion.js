@@ -156,3 +156,71 @@ export const curtainFit = modifier((element) => {
 
   return () => window.removeEventListener("resize", fit);
 });
+
+// Kick-off clocks as a split-flap departures board: once the card is on
+// screen, every digit tile flips through a few random digits before landing
+// on the real time, rows and digits slightly staggered. Runs once; the real
+// digits are the markup (data-d), so without JS or with reduced motion the
+// board simply shows the times.
+const FLIP = [
+  { transform: "rotateX(-80deg)", opacity: 0.55 },
+  { transform: "none", opacity: 1 },
+];
+
+export const splitFlap = modifier((element) => {
+  if (prefersCalm() || !("IntersectionObserver" in window)) {
+    return;
+  }
+
+  const tiles = [...element.querySelectorAll(".oaw-flap")];
+  const randomDigit = () => String(Math.floor(Math.random() * 10));
+
+  // scramble before the board is seen, so it never shows the final times first
+  tiles.forEach((tile) => {
+    tile.dataset.final = tile.dataset.d;
+    tile.dataset.d = randomDigit();
+  });
+
+  // steps run on a fixed timer, never waiting for an animation to finish,
+  // so a throttled or paused animation can't leave the board half-flipped
+  const timers = [];
+  const run = (tile, delay, flips) => {
+    for (let i = 0; i <= flips; i++) {
+      const last = i === flips;
+      timers.push(
+        setTimeout(() => {
+          tile.dataset.d = last ? tile.dataset.final : randomDigit();
+          tile.animate(FLIP, {
+            duration: last ? 160 : 70,
+            easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+          });
+        }, delay + i * 80)
+      );
+    }
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) {
+        return;
+      }
+      observer.disconnect();
+      element.querySelectorAll("li").forEach((row, r) => {
+        row.querySelectorAll(".oaw-flap").forEach((tile, d) => {
+          run(tile, r * 140 + d * 50, 4 + Math.floor(Math.random() * 5));
+        });
+      });
+    },
+    { threshold: 0.6 }
+  );
+  observer.observe(element);
+
+  return () => {
+    timers.forEach(clearTimeout);
+    observer.disconnect();
+    tiles.forEach((tile) => {
+      tile.getAnimations().forEach((animation) => animation.cancel());
+      tile.dataset.d = tile.dataset.final ?? tile.dataset.d;
+    });
+  };
+});

@@ -11,11 +11,29 @@ import {
   curtainFit,
   liveReveal,
   pollReveal,
+  splitFlap,
   stackRecede,
 } from "../lib/oa-welcome-motion";
 import OaWelcomePlayers from "./oa-welcome-players";
 
 const UNSPLASH = "?utm_source=online_arsenal&utm_medium=referral";
+
+// Kick-off of the 23 Nov 2025 derby (16:30 GMT) on the clocks where members
+// watch from. Each character becomes its own split-flap tile.
+const CLOCKS = [
+  ["New York", "11:30", "2025-11-23T11:30-05:00", "Sun"],
+  ["London", "16:30", "2025-11-23T16:30+00:00", "Sun"],
+  ["Amsterdam, Berlin, Stockholm", "17:30", "2025-11-23T17:30+01:00", "Sun"],
+  ["Mumbai", "22:00", "2025-11-23T22:00+05:30", "Sun"],
+  ["Sydney", "03:30", "2025-11-24T03:30+11:00", "Mon"],
+].map(([city, time, datetime, day]) => ({
+  city,
+  time,
+  datetime,
+  day,
+  nextDay: day !== "Sun",
+  chars: [...time].map((char) => ({ char, digit: char !== ":" })),
+}));
 
 // Replaces the stock login-required page for logged-out visitors. The forum
 // header stays, with its Sign Up and Log In buttons, as the always-there way
@@ -26,6 +44,7 @@ export default class OaWelcome extends Component {
   @service siteSettings;
 
   uploads = settings.theme_uploads ?? {};
+  clocks = CLOCKS;
   unsplash = UNSPLASH;
 
   // Same rule as the application controller's canSignUp, which the stock
@@ -294,24 +313,22 @@ export default class OaWelcome extends Component {
               </div>
               <h3>Arsenal vs Tottenham</h3>
               <p class="oaw-sub">Kick-off, 23 November 2025</p>
-              <ol class="oaw-clocks">
-                <li><span>New York</span><time
-                    datetime="2025-11-23T11:30-05:00"
-                  >11:30</time><span class="oaw-day">Sun</span></li>
-                <li class="oaw-home"><span>London</span><time
-                    datetime="2025-11-23T16:30+00:00"
-                  >16:30</time><span class="oaw-day">Sun</span></li>
-                <li><span>Amsterdam, Berlin, Stockholm</span><time
-                    datetime="2025-11-23T17:30+01:00"
-                  >17:30</time><span class="oaw-day">Sun</span></li>
-                <li><span>Mumbai</span><time
-                    datetime="2025-11-23T22:00+05:30"
-                  >22:00</time><span class="oaw-day">Sun</span></li>
-                <li><span>Sydney</span><time
-                    datetime="2025-11-24T03:30+11:00"
-                  >03:30</time><span
-                    class="oaw-day oaw-next-day"
-                  >Mon</span></li>
+              <ol class="oaw-clocks" {{splitFlap}}>
+                {{#each this.clocks as |clock|}}
+                  <li><span>{{clock.city}}</span><time
+                      datetime={{clock.datetime}}
+                      aria-label={{clock.time}}
+                    >{{#each clock.chars as |c|}}{{#if c.digit}}<span
+                            class="oaw-flap"
+                            data-d={{c.char}}
+                            aria-hidden="true"
+                          ></span>{{else}}<span
+                            class="oaw-flap-colon"
+                            aria-hidden="true"
+                          >:</span>{{/if}}{{/each}}</time><span
+                      class="oaw-day {{if clock.nextDay 'oaw-next-day'}}"
+                    >{{clock.day}}</span></li>
+                {{/each}}
               </ol>
             </figure>
           </section>
@@ -323,9 +340,8 @@ export default class OaWelcome extends Component {
           <div class="oaw-closing-inner">
             <div>
               <h2 class="oaw-h2">Pull up a seat.</h2>
-              <p class="oaw-lead">No waiting list, unlike the Emirates. No ads
-                either: members chip in for the hosting, so it stays that way.
-                Join for free, or log in to pick up where you left&nbsp;off.</p>
+              <p class="oaw-lead">No waiting list, unlike the Emirates. No ads,
+                ever. Join for free, or log in to pick up where you left&nbsp;off.</p>
             </div>
             <div class="oaw-actions">
               {{#if this.canSignUp}}
