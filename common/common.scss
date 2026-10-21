@@ -1473,7 +1473,11 @@ body.signup-page .signup-fullpage {
   --content-border-color: rgba(246, 239, 230, 0.12);
   --input-border-color: rgba(246, 239, 230, 0.28);
 
-  // inputs: the card colour, so floating labels sit cleanly on the border
+  // inputs: the card colour, so floating labels sit cleanly on the border.
+  // The new form-kit fields (sign-up email) read their own token, which a
+  // light colour scheme sets to cream: white text on cream when filled.
+  --token-color-background-input: #320a0f;
+  --token-color-background-accent-bolder: #eaaa00; // form-kit focus ring, gold like the button
   --d-input-bg-color: #320a0f;
   --d-input-text-color: #f6efe6;
   --d-input-border: 1px solid rgba(246, 239, 230, 0.28);
@@ -1527,6 +1531,16 @@ body.signup-page .signup-fullpage {
     border-radius: 12px;
     margin-bottom: 12px;
     max-width: 860px;
+  }
+
+  // browser autofill paints its own light background; keep the field dark
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f6efe6;
+    caret-color: #f6efe6;
+    box-shadow: 0 0 0 1000px #320a0f inset;
+    transition: background-color 9999s ease-out 0s;
   }
 
   .login-title {
